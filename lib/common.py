@@ -1,5 +1,5 @@
 # -*- coding:  UTF-8 -*-
-# -*- coding:  UTF-8 -*-
+
 __author__ = 'Sean Yu'
 __mail__ = 'try.dash.now@gmail.com'
 """
@@ -178,7 +178,7 @@ class CCSV2Case(object):
     def ParseCommand(self, s,VarSegment=False):
         if self.bFindComment:
             return
-        s = io.StringIO(s)
+        s = io.StringIO(unicode(s, "utf-8"))
         reader = csv.reader(s,delimiter=',')
         r =[]
         #print "="*100,"\n",s,"\n"
@@ -367,8 +367,10 @@ class CCSV2Case(object):
             if self.bFindCase==False:
                 raise Exception("Case(%s) can't be found in file(%s)"%(casename, filename))
         except Exception as e:          
-            print(e)
-            raise ("Case(%s) can't be found in file(%s):%s"%(casename, filename, e.__str__()))
+            import traceback
+            msg = traceback.format_exc()
+            print(msg)
+            raise BaseException("Case(%s) can't be found in file(%s):%s"%(casename, filename, e.__str__()))
     def GetMode(self,mode):
         try:            
             if str(mode).upper() =="SETUP":
@@ -540,9 +542,12 @@ class CCSV2Case(object):
                     self.sut.update({i:sutinbench[i]})
                 else:
                     self.TestPass = False
-                    raise("Fail", "(%s) in TestCase (%s) is not defined in Bench file (%s)"%(i,self.CaseName,sut["BENCH"]))
+                    raise Execption("(%s) in TestCase (%s) is not defined in Bench file (%s)"%(i,self.CaseName,sut["BENCH"]))
         except Exception as e:
-            raise("FAIL", "CDasHLog::GetSUT() failed: %s"%(str(e))) 
+            import traceback
+            msg = traceback.format_exc()
+            print(msg)
+            raise Exception( "GetSUT() failed: %s"%(str(e)))
 def LoadCaseFromCsv(bench,csvfile,casename, mode, argv=[]):
     case = CCSV2Case(bench, csvfile,casename, argv)
     case.PopulateCase(csvfile, casename)
@@ -568,9 +573,6 @@ import inspect
 import sys, traceback
 def DumpStack(e):
 
-    #print(inspect.getouterframes(inspect.currentframe()))
-    #print(inspect.getinnerframes(getouterframes(inspect.currentframe())))
-    #cf = inspect.currentframe()  
     exc_type, exc_value, exc_traceback = sys.exc_info()
     str = traceback.format_exception(exc_type, exc_value,exc_traceback)
     str = ''.join(str)
@@ -584,8 +586,13 @@ def DumpStack(e):
               
     return '%s\n*\t%s\n*\tglobals=> %s\n*\tlocals => %s\n*Traceback:\n*%s\n%s'%('*'*80,e.__str__().replace('\n','\n*\t'), globals,locals,str,'*'*80)
 
+import unittest
+class TestStringMethods(unittest.TestCase):
+    def test_csvstring2array(self):
+        a =csvstring2array('one,two,three\nline2,line2-2')
+        print(a)
 if __name__=='__main__':
-
+    unittest.main()
     a =csvstring2array('one,two,three\nline2,line2-2')
     print(a)
 
