@@ -586,11 +586,7 @@ def DumpStack(e):
               
     return '%s\n*\t%s\n*\tglobals=> %s\n*\tlocals => %s\n*Traceback:\n*%s\n%s'%('*'*80,e.__str__().replace('\n','\n*\t'), globals,locals,str,'*'*80)
 
-import unittest
-class TestStringMethods(unittest.TestCase):
-    def test_csvstring2array(self):
-        a =csvstring2array('one,two,three\nline2,line2-2')
-        print(a)
+
 if __name__=='__main__':
     unittest.main()
     a =csvstring2array('one,two,three\nline2,line2-2')

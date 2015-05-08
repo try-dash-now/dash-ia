@@ -1,0 +1,3 @@
+2960,TIMEOUT=10,"LOGIN=test,assword:,10\n123,~],20",CMD=telnet 192.168.1.112,SUT=,EXP=login:,LINEEND=u''+char(13)
+3750,TIMEOUT=10,"LOGIN=test,assword:,10\n123,~],20",CMD=telnet localhost,SUT=,EXP=login:,LINEEND=u''+char(13)
+cmd2,abc
