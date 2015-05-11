@@ -328,7 +328,7 @@ class Case(object):
 
         pid = os.getpid()
         #UpdateRecord(dbname, caseinfo, """status='ended-closed',end_time=%f"""%(time.time()), "status='running' and pid= %d"%(pid))
-        self.logger.info('update database done!')
+        #self.logger.info('update database done!')
         self.SaveCase2File()
         #if self.Sock:
             #self.Sock.shutdown(socket.SHUT_RDWR)
