@@ -3,7 +3,7 @@ __author__ = 'Sean Yu'
 __mail__ = 'try.dash.now@gmail.com'
 """
 created 2015/5/8 
-CWinSession is the basic class for telnet session, it provide the basic functions, as SendLine, Expect...
+WinSession is the basic class for telnet session, it provide the basic functions, as SendLine, Expect...
 """
 
 
@@ -11,7 +11,7 @@ import  os
 from telnetlib import Telnet as spawn
 import time
 import re as sre
-
+import traceback
 reSessionClosed =sre.compile ('Connection closed by foreign host',sre.M)
 class WinSession(spawn, object):
     match = None
@@ -120,7 +120,11 @@ class WinSession(spawn, object):
             if output[0]!=-1:
                 pass
             else:
-                raise
+
+                msg = traceback.format_exc()
+                msg += 'send(%s), expect(%s), within(%s)'%(step[0],step[1],str(step[2]))
+                print(msg)
+                raise Exception(msg)
     def EndSession(self):
         command = self.attrs['CMD']
         output =self.expect(['.*'], 1)
@@ -142,7 +146,7 @@ class WinSession(spawn, object):
             self.output+=args[0]
             self.seslog.write(args[0])
 
-        super(CWinSession, self).msg(msg,*args)
+        super(WinSession, self).msg(msg,*args)
 
     def GetFunArgs(self,*argvs, **kwargs):
         self.argvs=[]
@@ -158,7 +162,7 @@ class WinSession(spawn, object):
     def isalive(self):
         try:
             if os.name!='nt':
-                return super(CWinSession,self).isalive()
+                return super(WinSession,self).isalive()
             else:
                 return self.sock_avail()
         except Exception as e:
@@ -328,7 +332,7 @@ if __name__=='__main__':
         cmd = 'telnet cdc-dash'
         cmd = 'telnet 10.245.66.10'
         attr={'TIMEOUT':180,'LOGIN': 'e7,assword:,30\nadmin,>,30','CMD':cmd, 'LINEEND':u''+chr(13), 'EXP':'name:' }
-        s = CWinSession('sut_local',attr)
+        s = WinSession('sut_local',attr)
         command='SendLine("abcddddddddddddd",AntiIdle=True)'
         s.SendLine('command', True, False)
         s.SendLine('command2', True, False)

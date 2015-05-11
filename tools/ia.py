@@ -40,8 +40,8 @@ else:
     bench = benchname    
 
 
-from CCase import CCase
-#from CServer import CServer
+from Case import Case
+#from Server import Server
 #name,suts,CasePort=50001, steps=[[],[],[]],mode='FULL',DebugWhenFailed=False,logdir='./',caseconfigfile='./case.cfg'
 from common import bench2dict
 
@@ -247,7 +247,7 @@ class Interaction(Cmd):
             self.sut.update({sutname:self.benchinfo[sutname]})
         steps=[[],[],[]]
         mode ='FULL'
-        self.tc= CCase(casename,self.sut,steps=[[],[],[]],mode='FULL',DebugWhenFailed=False,logdir=manuallogdir,caseconfigfile='./case.cfg')
+        self.tc= Case(casename,self.sut,steps=[[],[],[]],mode='FULL',DebugWhenFailed=False,logdir=manuallogdir,caseconfigfile='../lib/case.cfg')
         self.thQureyOut = threading.Thread(target=self.QureyOutput)
         self.thQureyOut.start() 
         self.client ='interaction'
