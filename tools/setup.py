@@ -13,7 +13,14 @@ from distutils.core import setup
 import py2exe
 
 setup(console=["./ia.py"],
-      data_files= ['manualrun.cfg']
+      data_files= ['manualrun.cfg',
+                   ( 'bench',['../bench/local']),
+                   ('case', []),
+                   ('suite', []),
+                   ('database',[]),
+                   ('log',[]),
+                    ( 'log/manual', []),]
+
 )
 
 
