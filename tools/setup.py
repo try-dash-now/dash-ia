@@ -12,4 +12,21 @@ print('\n'.join(sys.path))
 from distutils.core import setup
 import py2exe
 
-setup(console=["./tools/ia.py"])
+setup(console=["./ia.py"],
+      data_files= ['manualrun.cfg']
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
