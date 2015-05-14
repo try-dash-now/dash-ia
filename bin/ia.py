@@ -11,6 +11,7 @@ print('\n'.join(sys.path))
 
 aa = '''CMD'''
 import telnetlib
+import WinSession # for py2exe bin distribution
 import traceback
 from Case import Case
 import sys
