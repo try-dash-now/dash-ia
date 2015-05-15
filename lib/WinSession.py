@@ -80,7 +80,10 @@ class WinSession(spawn, object):
 
     def info(self,msg):
         if not self.logger:
-            print(self.sutname,':INFO:%s'%time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),msg)
+            if self.fInteractionMode:#while in interaction mode, off all info
+                pass
+            else:
+                print(self.sutname,':INFO:%s'%time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),msg)
             return
         for line in str(msg).split("\n"):
             ln = "%s::%s"%(self.sutname,line)
