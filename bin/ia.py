@@ -67,7 +67,7 @@ class Interaction(Cmd):
     thQureyOut=None
     sut={}
     PauseOut=False
-    prompt='\n(tc)>>>'#''#'\n>>>'
+    prompt='(tc)>>>'#''#'\n>>>'
     quoting = '"'
     InteractionOutput=''
     InteractionRunning= True
@@ -177,65 +177,10 @@ class Interaction(Cmd):
         if flag==None or flag =='':
             flag = 'disable'
         self.tabend =flag
-    def do_Exit(self, name ='tc'):
-        #, killProcess=True
-        self.InteractionRunning=False
-        self.QureyOutput=False
-        import csv
-        MAX_LENGTH_OF_CELL =256
-        csvfile='%s%s%s.csv'%('../case'.replace('/', os.path.sep), os.path.sep,name)
-        #0    sut     1 action      2  expect      3 waittime    4 time    5 interval6raw  7fun 8 aurgs  
-        case = [
-                ['[%s]'%name],
-                ['#VAR'],
-                ['#SETUP']] + self.cmdlist+[
-                ['#RUN'],
-                ['#TEARDOWN'],
-                ['#!---']
-                ]
-        with open(csvfile, 'w') as f:
-            writer = csv.writer(f)
-            for row in case:
-                maxlen= 0
-                for item in row[:6]:
-                    if type(item)!=type(''):
-                        item=str(item)
-                    l = len(item)
-                    if l> maxlen:
-                        maxlen = l
-                if maxlen > MAX_LENGTH_OF_CELL:
-                    index = 0
-                    block =0
-                    maxcol = 6#len(row)
-                    newrow =[]
-                    while index <maxlen:
-                        for i in range(maxcol):
-                            newrow.append(row[i][block:(block+1)*MAX_LENGTH_OF_CELL]) 
-                        writer.writerow(newrow)
-                        block+=1
-                        index=block*MAX_LENGTH_OF_CELL
-                        
-                else:
-                    writer.writerow(row[:6])   
-            #writer.writerow(['#!---'])
-        
-        
-        
-#         with open('%s%s%s.csv'%(self.tc.LogDir, os.path.sep,name),'w', newline='\r\n') as f:
-#             index = 1  
-#             f.write("#index\tinterval(s)\ttime\tcmd\tfun\targuments\r\n")
-#             
-#             for line in self.cmdlist:   
-#                  #0    sut     1 action      2  expect      3 waittime    4 time    5 interval6raw  7fun 8 aurgs       
-#                 f.write('%d\t%.2f\t%s\t%s\t%s\t%s\r\n'%(index, 
-#                                                         line[4], 
-#                                                         str(line[3]),
-#                                                         line[0], 
-#                                                         str(line[1]), 
-#                                                         str(line[2])
-#                                                         )
-#                         )
-#                 index+=1
+    def do_Exit(self, name =None):
+        if not name :
+            name = 'tc'
+        self.tc.Name = name
         self.tc.EndCase(force=True, killProcess=True)
         exit()
 
@@ -273,7 +218,7 @@ class Interaction(Cmd):
             sutname='tc'
         if self.sut.get(sutname) or sutname =='tc' or sutname =='__case__':
             self.sutname=sutname
-            self.prompt= '\n(%s)>>>'%self.sutname
+            self.prompt= '%s(%s)>>>'%(os.linesep, self.sutname)
             return 'current SUT: %s'%(self.sutname)
         else:
             return 'sutsut(\'%s\') is not defined'%self.sutname
@@ -337,7 +282,8 @@ class Interaction(Cmd):
                 if self.sutname!='tc':
                     output = self.tc.RequestSUTOutput(self.client, self.sutname)
                     if len(output)!=0 and self.UpdatingOutput :
-                        print('\n\t'+output.replace('\n', '\n\t'), self.prompt)
+                        print(os.linesep+'\t'+output.replace('\n', '\n\t') )
+                        print(self.prompt)
             if len(self.InteractionOutput)   :
                 print(self.InteractionOutput)
             self.InteractionOutput=''
@@ -480,6 +426,7 @@ class Interaction(Cmd):
                     newcmd = [self.sutname, "%s(%s)"%(self.defaultfunction,args), '.*', 1.0, timeStr, interval, data, fun, real_vars]
                 
                 self.cmdlist.append(newcmd)
+                self.tc.AddCmd2RecordReplay(newcmd)
                 response =fun(*real_vars)
         if response!=None and len(str(response))!=0:
             self.InteractionOutput+=self.InteractionOutput+'\n'+self.prompt+str(response)+self.prompt

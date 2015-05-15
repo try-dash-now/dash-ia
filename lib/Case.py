@@ -67,10 +67,12 @@ class Case(object):
         csvfile = '../case/manual/%s'%(self.Name+time.strftime("_%Y%m%d_%H%M%S", time.localtime()))
         with open(csvfile, 'w') as f:
             writer = csv.writer(f)
+            lastcol2write = 4
             for row in self.RecordReplay:
                 maxlen= 0
+                row = row[:lastcol2write]
                 for item in row:
-                    l = len(item)
+                    l = len(str(item))
                     if l> maxlen:
                         maxlen = l
                 if maxlen > MAX_LENGTH_OF_CELL:
@@ -99,7 +101,7 @@ class Case(object):
         rowIndex = len(self.RecordReplay)-1
         while len (self.RecordReplay[rowIndex])<colIndex+2:            
             self.RecordReplay[rowIndex].append('')
-        self.RecordReplay[rowIndex][colIndex] = '''%s'''%(self.RecordReplay[rowIndex][colIndex]+ data)
+        self.RecordReplay[rowIndex][colIndex] = '''%s'''%(str(self.RecordReplay[rowIndex][colIndex])+ data)
         self.lockRR.release()
         
     def AddCmd2RecordReplay(self,cmd):
