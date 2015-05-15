@@ -99,7 +99,7 @@ class Task(object):
         if cmd.startswith('./run.p') or cmd.startswith('./t.p') or cmd.startswith('t.p'):
             pass
         else:
-            cmd = './html/case/%s'%cmd
+            cmd = '../case/%s'%cmd
         if str(cmd).find(".py") !=-1:
             rePythonVersion = sre.compile(".+?;([0-9]+\.[0-9]+)\s*$", sre.M)
             m = sre.match(rePythonVersion, str(cmd))
@@ -369,7 +369,7 @@ class Task(object):
                 #print('')
             print('-'*80)
             report =self.GenerateHtmlReport()
-            htmlfile = "./html/report/%s_%s_%s_%s.html"%(self.SuiteFile,'_'.join(self.ArgStr), self.CaseRangeStr, self.TaskStartTime)
+            htmlfile = "../report/%s_%s_%s_%s.html"%(self.SuiteFile,'_'.join(self.ArgStr), self.CaseRangeStr, self.TaskStartTime)
             htmlfile=htmlfile.replace('-', '_').replace(',', '_').replace('/', '_')
             with open(htmlfile, 'wb') as f:
                 f.write(report.encode(encoding='utf_8', errors='strict'))

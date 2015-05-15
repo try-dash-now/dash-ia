@@ -183,7 +183,7 @@ class Interaction(Cmd):
         self.QureyOutput=False
         import csv
         MAX_LENGTH_OF_CELL =256
-        csvfile='%s%s%s.csv'%('./html/case'.replace('/', os.path.sep), os.path.sep,name)
+        csvfile='%s%s%s.csv'%('../case'.replace('/', os.path.sep), os.path.sep,name)
         #0    sut     1 action      2  expect      3 waittime    4 time    5 interval6raw  7fun 8 aurgs  
         case = [
                 ['[%s]'%name],

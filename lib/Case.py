@@ -64,7 +64,7 @@ class Case(object):
     def SaveCase2File(self):
         import csv
         MAX_LENGTH_OF_CELL =256
-        csvfile = './html/case/manual/%s'%(self.Name+time.strftime("_%Y%m%d_%H%M%S", time.localtime()))
+        csvfile = '../case/manual/%s'%(self.Name+time.strftime("_%Y%m%d_%H%M%S", time.localtime()))
         with open(csvfile, 'w') as f:
             writer = csv.writer(f)
             for row in self.RecordReplay:
