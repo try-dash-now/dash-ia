@@ -226,6 +226,8 @@ class WinSession(spawn, object):
         self.fExpecting=True
         if wait==None:
             wait=0.5
+        else:
+            wait = float(wait)
         found =None
 
         global reSessionClosed
@@ -251,7 +253,7 @@ class WinSession(spawn, object):
         m =None
         if not nowait:
             if not self.fInteractionMode:
-                output =self.expect(["%s"%(pat)],wait)
+                output =self.expect(["%s"%(pat)],float(wait))
                 self.output= output[2]
                 if output[0]==-1:
                     raise
