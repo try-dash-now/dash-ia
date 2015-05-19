@@ -241,8 +241,11 @@ class Case(object):
                     cfg.update({i[0].strip().lower():i[1].strip()})
             except Exception as e:
                 print(e.__str__())
-        self.ServerHost = cfg['serverhost']
-        self.ServerPort = int(cfg['serverport'])
+        try:
+            self.ServerHost = cfg['serverhost']
+            self.ServerPort = int(cfg['serverport'])
+        except:
+            pass
         self.Name= name.replace('/','_').replace('\\','_')
         
         self.LogDir = '%s%s%s'%(logdir,os.sep,'%s%s'%(name.replace('/','_').replace('\\','_'),time.strftime("@%Y%m%d_%H%M%S", time.localtime())))
@@ -621,7 +624,10 @@ class Case(object):
                     self.error(DumpStack(e))
                     if not self.DebugWhenFailed:
                         self.bCaseEnd=True
-                        raise
+                        import traceback
+                        msg = traceback.format_exc()
+                        print(msg)
+                        raise Exception(msg)
             self.fRunning=False
             if not self.flagInteraction:
                 self.bCaseEnd=True
