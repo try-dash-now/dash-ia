@@ -343,27 +343,31 @@ class Task(object):
         try:
             print('Report:\n')
             print('-'*80)
-            print('\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s'%(self.Report[0][0], 
-                                                          self.Report[0][8],
-                                                          self.Report[0][2],
-                                                          self.Report[0][4],
-                                                          self.Report[0][7],
-                                                          str(self.Report[0][1]),
-                                                          self.Report[0][3],
-                                                          self.Report[0][5],
-                                                          self.Report[0][6]))
+            line = '\t'+'\t'.join(self.Report[0])
+            print(line)
+            # print('\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s'%(self.Report[0][0],
+            #                                               self.Report[0][8],
+            #                                               self.Report[0][2],
+            #                                               self.Report[0][4],
+            #                                               self.Report[0][7],
+            #                                               str(self.Report[0][1]),
+            #                                               self.Report[0][3],
+            #                                               self.Report[0][5],
+            #                                               self.Report[0][6]))
             for r in self.Report[1:]:
                 try:
-                    print('\t%d\t%s\t%d\t%d\t%s\t%s\t%s\t%s\t%s'%(int(r[0]), 
-                                                              r[8],
-                                                              int(r[2]),
-                                                              int(r[4]),
-                                                              r[7],
-                                                              str(r[1]),
-                                                              r[3],
-                                                              r[5],
-                                                              r[6])
-                      )
+                    line = '\t'+'\t'.join([ str(i) for i in r])
+                    print(line)
+                    # print('\t%d\t%s\t%d\t%d\t%s\t%s\t%s\t%s\t%s'%(int(r[0]),
+                    #                                           r[8],
+                    #                                           int(r[2]),
+                    #                                           int(r[4]),
+                    #                                           r[7],
+                    #                                           str(r[1]),
+                    #                                           r[3],
+                    #                                           r[5],
+                    #                                           r[6])
+                    #   )
                 except Exception as e:
                     print(e)
                     
