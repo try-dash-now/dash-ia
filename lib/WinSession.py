@@ -256,7 +256,7 @@ class WinSession(spawn, object):
                 output =self.expect(["%s"%(pat)],float(wait))
                 self.output= output[2]
                 if output[0]==-1:
-                    raise
+                    raise Exception('no Expect(%s) found'%(str(pat)))
                 m = sre.search(pat,self.output, sre.M|sre.DOTALL)
             else:
                 interval=0.1
