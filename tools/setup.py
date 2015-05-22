@@ -12,7 +12,7 @@ print('\n'.join(sys.path))
 from distutils.core import setup
 import py2exe
 
-setup(console=["../bin/ia.py"],
+dist = setup(console=["../bin/ia.py"],
       data_files= ['../bin/manualrun.cfg',
                    ( 'bench',['../bench/local']),
                    ('case', []),
@@ -25,7 +25,27 @@ setup(console=["../bin/ia.py"],
                     ( 'log/manual', []),]
 
 )
+folder = './dist'
+for op in sys.argv:
 
+    indexOfd = op.find('-d')
+    if indexOfd !=-1:
+        folder = sys.argv[sys.argv.index(op)+1]
+        break
+
+
+
+
+import shutil
+targetDir = os.sep.join([folder, 'bin'])
+for file in os.listdir(folder):
+    sourceFile = os.path.join(folder,  file)
+    targetFile = os.path.join(targetDir,  file)
+    #cover the files
+
+    if os.path.isfile(sourceFile):
+        open(targetFile, "wb").write(open(sourceFile, "rb").read())
+        os.remove(sourceFile)
 
 
 

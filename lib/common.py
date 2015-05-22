@@ -141,6 +141,7 @@ class CCSV2Case(object):
     ARGV=[]
     VAR =[]
     sut={}
+    MODE=None
     def __init__(self,benchname='', filename="",casename="",argv=[]):
         self.BenchInfo = bench2dict(benchname)
         self.ARGV=argv
@@ -566,7 +567,7 @@ def DumpDict(dicts):
     key = sorted(key)
     for k in key:
         n = k
-        o= dict[k]
+        o= dicts[k]
         s+='\t%s: %s\n'%(repr(n),repr(o).replace('\\\\', '\\'))
     return s
 import inspect
