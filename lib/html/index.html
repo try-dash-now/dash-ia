@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<link rel="icon" href="/favicon.ico" type="image/x-icon" /> 
+		<title>SWOT</title>
+	
+		<style type="text/css">
+			h1 {
+				color: blue;
+				background-color: #ADD8E6;
+				}
+			h2 {
+				color: brown;
+				font-style: italic;
+				}
+			h3 {color: brown}
+			h4 {color: black; background-color: #ADD8E6;}
+			h6 {color: green; background-color: #ADD8E6;}
+		    * { padding:0; margin:0; }
+		    html, body { height:100%; }
+		    #container { height:100%; border-collapse:collapse;  }
+			p {color: black}
+		</style>
+		
+		
+	</head>
+
+    <script type="text/javascript" >
+    <!--
+
+		function newHTML( HTMLstring) {
+			newwindow=window.open();
+			newdocument=newwindow.document;
+			newdocument.write(HTMLstring);
+			newdocument.close();
+		}
+
+        function post( id, dest, params )
+        {
+            var xmlhttp;
+
+            if (window.XMLHttpRequest)
+            {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {// code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+
+	    	xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+						newHTML(xmlhttp.responseText);	
+						
+                    	return xmlhttp.responseText;
+                }
+            }
+            xmlhttp.open("POST",dest,true);
+            xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xmlhttp.send( params ); 
+            
+
+        }
+
+        function onRunCases()    {
+		var response ='';
+	    	response = post( "SuiteList","/cgi-bin/onLaunchAutoTask.py", "REQIRETYPE="+encodeURI('SuiteList') );
+	    		
+        }	
+
+        function onManualTest()        {
+		var response ='';
+	    	response = post( "ManualTestStart","/cgi-bin/onLaunchAutoTask.py", "REQIRETYPE="+encodeURI('BenchList4ManualTest') );
+	    		
+        }
+
+        function onLaunchAutoTask()        {
+		var response ='';
+	    	response = post( "manualtest","/cgi-bin/onLaunchAutoTask.py", "REQIRETYPE="+encodeURI('suite') );	
+        }
+        
+        function onStatusInquiry()        {
+		var response ='';
+	    	response = post( "manualtest","/cgi-bin/onLaunchAutoTask.py", "REQIRETYPE="+encodeURI('suite') );	
+	    	
+        }		
+        function onSuiteStatusRequire()        {
+
+		var thestring = 'cmd='+encodeURI('get runningsuite');
+		alert(thestring);
+		post( 'suiteselect','/cgi-bin/Web2ServerCmd.py', thestring ); 
+        }
+        function onCaseStatusRequire()        {
+
+		var thestring = 'cmd='+encodeURI('get runningcase');
+		alert(thestring);
+		post( 'suiteselect','/cgi-bin/Web2ServerCmd.py', thestring ); 
+        }    
+-->
+    </script>
+
+
+	<body>	
+	<h1 align="center">SWOT</h1>
+	<br>
+	<div id="subtitle" align="center" >
+	<p class=MsoNormal><span lang=EN-US style='color:#0000ff'>S</span><span
+lang=EN-US>imply <span style='color:#0000ff'>W</span>ork <span class=SpellE><span
+style='color:#0000ff'>O</span>ver<span style='color:#0000ff'>T</span>ime</span>,
+or <span style='color:#0000ff'>S</span>martly <span style='color:#0000ff'>W</span>ork
+<span style='color:#0000ff'>O</span>n <span style='color:#0000ff'>T</span>ime?</span></p>
+	</div>
+	<br>
+	<br>
+	<table id="TEST"  border="0" align='center'  width="100%"  >
+		<tr id="headline">
+			<td align=center valign=middle><a href="javascript:onManualTest()">Manual Test</a></td>			
+		</tr>
+		<tr id="line1">	
+			<td align=center valign=middle><a href="javascript:onRunCases()">Run Cases</a></td>
+		</tr>
+	</table>
+	<br>
+	<br>	
+	<table   border="0" align='center' width="100%"  >		
+		<tr>
+			<td align=center valign=middle><a href="./html/UploadFile.html">Upload Bench/Case/Suite</a></td>
+		</tr>
+		<tr>
+			<td align=center valign=middle><a href="./html/StatusInquiry.html">Status Inquiry</a></td>
+		</tr>
+		</tr>
+	</table>
+	<br>
+	<br>	
+	<table   border="0" align='center' width="100%"  >
+		<tr>
+		<td align=center valign=middle><a href="./html/case">Cases</a></td>
+		</tr>
+		<tr>
+		<td align=center valign=middle><a href="./html/case/manual">Manual Cases</a></td>
+		</tr>
+		<tr>
+		<td align=center valign=middle><a href="./html/suite">Suites</a></td>	
+		</tr>
+		<tr>
+		<td align=center valign=middle><a href="./html/bench">Benchs</a></td>
+		</tr>
+	</table>
+	<br>
+	<br>	
+	<table   border="0" align='center' width="100%"  >
+		<tr>
+		<td align=center valign=middle><a href="./html/log">Logs</a></td>
+		</tr>
+		<tr>
+		<td align=center valign=middle><a href="./html/log/manual">Manual Logs</a></td>
+		</tr>
+		
+		<tr id="line1">	<td align=center valign=middle><a href="./html/report">Test Report</a></td></tr>
+	</table>
+	<BR>
+	
+
+	</body>
+</html>

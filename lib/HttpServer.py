@@ -4,14 +4,10 @@ __mail__ = 'try.dash.now@gmail.com'
 '''
 created 2015/5/22 
 '''
+from SocketServer import ThreadingMixIn
+from BaseHTTPServer import HTTPServer,BaseHTTPRequestHandler
 
-from http.server import HTTPServer, SimpleHTTPRequestHandler
-import io,shutil,urllib  ,os
-from socketserver import  ThreadingMixIn
-from Database import FetchOne, UpdateRecord,InsertRecord
-#sys.path.append('../')
-#class MyHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-class HttpHandler(ThreadingMixIn, SimpleHTTPRequestHandler):
+class HttpHandler(BaseHTTPRequestHandler):
     logger=None
     hdrlog =None
     runcfg = None
@@ -42,57 +38,33 @@ class HttpHandler(ThreadingMixIn, SimpleHTTPRequestHandler):
         #return
         print(str(self.client_address) + ' ' +str(msg))
 
-    def do_GETx(self):
-        name=""
-        encoded=None
-        #self.send_response(200)
-        #self.send_header('Content-type',    'text/html')
-        #self.end_headers()
-        if '?' in self.path:
-            self.queryString=urllib.parse.unquote(self.path.split('?',1)[1])
-            #name=str(bytes(params['name'][0],'GBK'),'utf-8')
-            params=urllib.parse.parse_qs(self.queryString)
-            print(params)
-            indexpage= open('./html/suitelist.html', 'r')
+
+    def do_GET(self):
+        home= "../lib/html/"
+        if self.path=='/':
+            #indexpage= open('./index.html', 'r')
+            #encoded=indexpage.read()
+            #encoded = encoded%(name)
+            indexpage= open(home+ 'index.html', 'r')
+            #"Hello "+name+" <form action='' method='POSt'>Name:<input name='name' /><br /><input type='submit' value='submit' /></form>"
             encoded=indexpage.read()
-            name=params["login"][0] if "login" in params else None
-            encoded = encoded%(name)
-        elif self.path=='/':
-            indexpage= open('./index.html', 'r')
+            encoded = encoded.encode(encoding='utf_8')
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            #self.end_headers()
+        elif self.path =='/favicon.ico':
+            indexpage= open(home+'dashico', 'r')
             encoded=indexpage.read()
-            encoded = encoded%(name)
-        elif str(self.path).endswith('/'):
-            #f = open(curdir + sep + self.path, 'rb')
-            if self.path[0]=='/':
-                self.path = self.path[1:]
-
-            indexpage = self.list_directory(self.path)
-            #indexpage= open('./html%s'%self.path, 'rb')
-            encoded=indexpage.read()
-            encoded = encoded.decode("utf-8")
-        else:
-            if self.path[0]=='/':
-                self.path = self.path[1:]
-
-
-            indexpage= open(self.path, 'rb')
-            encoded=indexpage.read()
-            encoded = encoded.decode("utf-8")
-            encoded=encoded.replace('\n\r', '<br>')
-            encoded=encoded.replace('\n', '<br>')
-
-        encoded = encoded.encode(encoding='utf_8') #"Hello "+name+" <form action='' method='POSt'>Name:<input name='name' /><br /><input type='submit' value='submit' /></form>"
-
-        f = io.BytesIO()
-        f.write(encoded)
-        f.seek(0)
-        self.send_response(200)
-
-        self.send_header("Content-type", "text/html")#; charset=%s" % enc)
-        #self.send_header("Content-Length", str(len(encoded)))
-        #self.send_response_only(300, r_str)
+            self.send_response(200)
+            self.send_header("Content-type", "application/x-ico")
         self.end_headers()
-        shutil.copyfileobj(f,self.wfile)
+        self.wfile.write(encoded)
+
+
+
+
+
+
     def OnManualTestRequest(self):
         self.info(self.OnManualTestRequest.__name__+' start')
         from os import listdir
@@ -770,6 +742,7 @@ class HttpHandler(ThreadingMixIn, SimpleHTTPRequestHandler):
         f.write(encoded)
         f.seek(0)
         shutil.copyfileobj(f,self.wfile)
+
 
 class ThreadingHttpServer(ThreadingMixIn, HTTPServer):
     pass
