@@ -6,12 +6,16 @@ created 2015/5/22 
 '''
 from SocketServer import ThreadingMixIn
 from BaseHTTPServer import HTTPServer,BaseHTTPRequestHandler
+import os
+import StringIO, cgi , urllib
 
 class HttpHandler(BaseHTTPRequestHandler):
     logger=None
     hdrlog =None
     runcfg = None
     fDBReseting=False
+    httpserver =None
+    rootdir = None
     def __del__(self):
         #self.hdrlog.close()
         print('end http server')
@@ -38,25 +42,82 @@ class HttpHandler(BaseHTTPRequestHandler):
         #return
         print(str(self.client_address) + ' ' +str(msg))
 
+    def list_dir(self, path, related_path):
+        """Helper to produce a directory listing (absent index.html).
 
+        Return value is either a file object, or None (indicating an
+        error).  In either case, the headers are sent, making the
+        interface the same as for send_head().
+
+        """
+        content =""
+        try:
+            list = os.listdir(path)
+        except os.error:
+            self.send_error(404, "No permission to list directory")
+            return None
+        list.sort(key=lambda a: a.lower())
+        #f = StringIO()
+        displaypath = cgi.escape(urllib.unquote(self.path))
+        content='<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'
+        content+="<html>\n<title>Directory listing for %s</title>\n" % displaypath
+        content+="<body>\n<h2>Directory listing for %s</h2>\n" % displaypath
+        content+="<hr>\n<ul>\n"
+        for name in list:
+            fullname = os.path.join(path, name)
+            displayname = linkname = name
+            # Append / for directories or @ for symbolic links
+            if os.path.isdir(fullname):
+                displayname = name + "/"
+                linkname = name + "/"
+            if os.path.islink(fullname):
+                displayname = name + "@"
+                # Note: a link to a directory displays with @ and links with /
+            content+='<li><a href="%s">%s</a>\n'% ('/'.join([related_path, urllib.quote(linkname)]), cgi.escape(displayname))
+        content+="</ul>\n<hr>\n</body>\n</html>\n"
+
+        return content
+    def array2htmltable(self,Array):
+        content = "<table   border='1' align='left' width=autofit  >"
+
+        for sublist in Array:
+            content += '  <tr><td>\n'
+            content += '    </td><td>'.join([x if x!='' else '&nbsp;' for x in sublist ])
+            content += '  \n</td></tr>\n'
+        content += ' \n </table><br>'
+        return  content
     def do_GET(self):
         home= "../lib/html/"
+        root = '../'
+        response = 200
+        type = 'text/html'
         if self.path=='/':
-            #indexpage= open('./index.html', 'r')
-            #encoded=indexpage.read()
-            #encoded = encoded%(name)
             indexpage= open(home+ 'index.html', 'r')
-            #"Hello "+name+" <form action='' method='POSt'>Name:<input name='name' /><br /><input type='submit' value='submit' /></form>"
             encoded=indexpage.read()
             encoded = encoded.encode(encoding='utf_8')
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            #self.end_headers()
         elif self.path =='/favicon.ico':
-            indexpage= open(home+'dashico', 'r')
+            indexpage= open(home+'dash.ico', 'r')
             encoded=indexpage.read()
-            self.send_response(200)
-            self.send_header("Content-type", "application/x-ico")
+            type =  "application/x-ico"
+        else:
+            path = os.path.abspath(root)
+            path = '/'.join([path, self.path])
+            if  os.path.isfile(path):
+                #if path.endswith('.csv'):
+                from common import csvfile2array
+                arrary = csvfile2array(path)
+
+                encoded = self.array2htmltable(arrary)
+
+                #indexpage= open(path, 'r')
+
+                #encoded+=indexpage.read()
+            else:
+                encoded =self.list_dir(path, self.path)
+
+
+        self.send_response(200)
+        self.send_header("Content-type", type)
         self.end_headers()
         self.wfile.write(encoded)
 
