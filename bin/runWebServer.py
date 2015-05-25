@@ -5,12 +5,20 @@ pardir =os.path.dirname(os.path.realpath(os.getcwd()))
 #pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
 sys.path.append(os.path.sep.join([pardir,'lib']))
 
-from HttpServer import ThreadingHttpServer, HttpHandler
+
+from HttpServer import  ThreadingHttpServer, HttpHandler
+
+httpd=ThreadingHttpServer(('',8080), HttpHandler)
+from socket import *
+s = socket(AF_INET, SOCK_DGRAM)
+s.bind(("", 1235))
+sq = socket(AF_INET, SOCK_DGRAM)
+sq.connect(("10.0.0.4", 1234))
+hostip = sq.getsockname()[0]
+sq.close()
+hostname =gethostname()
+
+print("Server started on %s (%s),port 8080....."%(hostname,hostip))
+httpd.serve_forever()
 
 
-
-if __name__=='__main__':    
-    httpd=ThreadingHttpServer(('',8080), HttpHandler)
-    
-    print("Server started on 127.0.0.1,port 8080.....")     
-    httpd.serve_forever() 

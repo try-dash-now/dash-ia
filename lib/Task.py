@@ -489,6 +489,6 @@ class Task(object):
                     i =[int(i)-1]
                 drange =drange+i
             caserange= sorted(drange)
-            self.CaseRange=caserange
-            return self.CaseRange
+        self.CaseRange=caserange
+        return self.CaseRange
 
