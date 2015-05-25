@@ -53,7 +53,7 @@ class HttpHandler(BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             #self.end_headers()
         elif self.path =='/favicon.ico':
-            indexpage= open(home+'dashico', 'r')
+            indexpage= open(home+'dash.ico', 'r')
             encoded=indexpage.read()
             self.send_response(200)
             self.send_header("Content-type", "application/x-ico")
