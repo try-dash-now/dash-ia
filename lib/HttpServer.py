@@ -52,7 +52,9 @@ class HttpHandler(BaseHTTPRequestHandler):
         {
             element = document.getElementById(id);
             value = element.value
-            params = 'script='+encodeURI(id)+'&arg='+encodeURI(value)
+            bench = document.getElementById(id+'_bench');
+            bench= bench.value
+            params = 'script='+encodeURI(id)+'&arg='+encodeURI(value)+'&bench='+encodeURI(bench)
             var xmlhttp;
 
             if (window.XMLHttpRequest)
@@ -91,7 +93,10 @@ class HttpHandler(BaseHTTPRequestHandler):
             input_button =""
             filename = urllib.quote(linkname)
             if related_path.startswith('/case') and os.path.isfile(fullname):
-                input_button = """<input id=%s name="ARGS" style="width:200"  type="text" value="" rows="1"   autocomplete="on"> <input name="go" value="Run" type="button" onClick="post('%s', 'RunCase')";>"""%(filename,filename)
+                input_button = """
+                <input id=%s_bench name="bench" style="width:200"  type="text" value="" rows="1"   autocomplete="on">
+                <input id=%s name="ARGS" style="width:200"  type="text" value="" rows="1"   autocomplete="on">
+                <input name="go" value="Run" type="button" onClick="post('%s', 'RunCase')";>"""%(filename, filename,filename)
             content+='<li><a href="%s">%s</a>\n'% ('/'.join([related_path, urllib.quote(linkname)]), cgi.escape(displayname))+input_button
         content+="</ul>\n<hr>\n</body>\n</html>\n"
 
