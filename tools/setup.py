@@ -12,12 +12,16 @@ print('\n'.join(sys.path))
 from distutils.core import setup
 import py2exe
 
-dist = setup(console=["../bin/ia.py"],
+dist = setup(console=["../bin/ia.py",
+                      "../bin/runTask.py",
+                      "../bin/runWebServer.py",
+                      ],
       data_files= ['../bin/manualrun.cfg',
                    ( 'bench',['../bench/local']),
                    ('case', []),
                    ( 'case/manual', []),
                    ('suite', []),
+                   ('report', []),
                    ('database',[]),
                    ('log',[]),
                    ('bin',[]),
