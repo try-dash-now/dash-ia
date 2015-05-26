@@ -52,9 +52,7 @@ class HttpHandler(BaseHTTPRequestHandler):
         {
             element = document.getElementById(id);
             value = element.value
-            bench = document.getElementById(id+'_bench');
-            bench= bench.value
-            params = 'script='+encodeURI(id)+'&arg='+encodeURI(value)+'&bench='+encodeURI(bench)
+            params = 'script='+encodeURI(id)+'&arg='+encodeURI(value)
             var xmlhttp;
 
             if (window.XMLHttpRequest)
@@ -94,9 +92,12 @@ class HttpHandler(BaseHTTPRequestHandler):
             filename = urllib.quote(linkname)
             if related_path.startswith('/case') and os.path.isfile(fullname):
                 input_button = """
-                <input id=%s_bench name="bench" style="width:200"  type="text" value="" rows="1"   autocomplete="on">
                 <input id=%s name="ARGS" style="width:200"  type="text" value="" rows="1"   autocomplete="on">
-                <input name="go" value="Run" type="button" onClick="post('%s', 'RunCase')";>"""%(filename, filename,filename)
+                <input name="go" value="Run" type="button" onClick="post('%s', 'RunCase')";>"""%(filename,filename)
+            elif related_path.startswith('/suite') and os.path.isfile(fullname):
+                input_button = """
+                <input id=%s name="ARGS" style="width:200"  type="text" value="" rows="1"   autocomplete="on">
+                <input name="go" value="Run" type="button" onClick="post('%s', 'RunSuite')";>"""%(filename,filename)
             content+='<li><a href="%s">%s</a>\n'% ('/'.join([related_path, urllib.quote(linkname)]), cgi.escape(displayname))+input_button
         content+="</ul>\n<hr>\n</body>\n</html>\n"
 
@@ -267,7 +268,9 @@ class HttpHandler(BaseHTTPRequestHandler):
             if self.path =='/RunCase':
                 print(os.getcwd())
                 encoded=self.RunScript('t.py', [script, arg])
-
+            elif self.path=='/RunSuite':
+                print(os.getcwd())
+                encoded=self.RunScript('runTask.py', [script, arg])
 
 
 
