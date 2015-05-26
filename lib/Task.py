@@ -373,7 +373,7 @@ class Task(object):
                 #print('')
             print('-'*80)
             report =self.GenerateHtmlReport()
-            htmlfile = "%s_%s_%s.html"%('_'.join(self.ArgStr), self.CaseRangeStr, self.TaskStartTime)
+            htmlfile = "%s_%s_%s.html"%(self.ArgStr, self.CaseRangeStr, self.TaskStartTime)
             htmlfile=htmlfile.replace('-', '_').replace(',', '_').replace('/', '_')
             with open("%s/%s_%s"%( self.RunCfg['report'],os.path.basename(self.SuiteFile),htmlfile), 'wb') as f:
                 f.write(report.encode(encoding='utf_8', errors='strict'))
