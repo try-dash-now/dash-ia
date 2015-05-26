@@ -1,4 +1,4 @@
-t.py local case1.csv case2 full,abort,try 2
-t.py local case1.csv case3 full bbbb,,try 2
-t.py local case1.csv case3 full ccc,abort,try 2
-t.py local case1.csv case3 full bbbb,, try 2
+t.py case1.csv local case2 full,abort,try 2
+t.py case1.csv local case3 full bbbb,,try 2
+t.py case1.csv local case3 full ccc,abort,try 2
+t.py case1.csv local case3 full bbbb,, try 2
