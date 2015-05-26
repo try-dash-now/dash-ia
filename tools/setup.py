@@ -26,6 +26,8 @@ dist = setup(console=["../bin/ia.py",
                    ('log',[]),
                    ('bin',[]),
                    ('lib',['../lib/case.cfg']),
+                   ( 'lib/html', []),
+                   ( 'lib/html', ['../lib/html/index.html']),
                     ( 'log/manual', []),]
 
 )

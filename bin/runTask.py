@@ -11,14 +11,14 @@ import time
 import signal
 #from Database import FetchOne, UpdateRecord
 
+
 sreTry = sre.compile("^\s*try\s+([0-9]+)\s*", sre.I)
 sreAbort = sre.compile("^\s*abort\s*", sre.I)
 from Task import Task
 
 
 if __name__=='__main__': 
-    from Server import Server 
-    from Socket import cmd2
+
     suitefile=sys.argv[1]
     caserange=sys.argv[2]
     args =sys.argv[3]
