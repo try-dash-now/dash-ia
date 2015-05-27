@@ -250,7 +250,7 @@ class Case(object):
             pass
         self.Name= name.replace('/','_').replace('\\','_')
         
-        self.LogDir = '%s%s%s'%(logdir,os.sep,'%s%s'%(name.replace('/','_').replace('\\','_'),time.strftime("@%Y%m%d_%H%M%S", time.localtime())))
+        self.LogDir = '%s%s%s'%(logdir,os.sep,'%s%s'%(name.replace('/','_').replace('\\','_'),time.strftime("_%Y%m%d_%H%M%S", time.localtime())))
         self.LogDir = self.LogDir.replace('\\',os.path.sep).replace('/', os.path.sep)
 
         os.mkdir(os.path.abspath(self.LogDir))

@@ -9,14 +9,19 @@ pardir =os.path.dirname(os.path.realpath(__file__))
 pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
 sys.path.append(os.path.sep.join([pardir,'lib']))
 print('\n'.join(sys.path))
+
+
+
 from distutils.core import setup
 import py2exe
 
 dist = setup(console=["../bin/ia.py",
                       "../bin/runTask.py",
                       "../bin/runWebServer.py",
+                      "../bin/t.py",
                       ],
       data_files= ['../bin/manualrun.cfg',
+                   '../bin/run.cfg',
                    ( 'bench',['../bench/local']),
                    ('case', []),
                    ( 'case/manual', []),
@@ -28,6 +33,7 @@ dist = setup(console=["../bin/ia.py",
                    ('lib',['../lib/case.cfg']),
                    ( 'lib/html', []),
                    ( 'lib/html', ['../lib/html/index.html']),
+                   ( 'lib/html', ['../lib/html/dash.ico']),
                     ( 'log/manual', []),]
 
 )
@@ -52,6 +58,8 @@ for file in os.listdir(folder):
     if os.path.isfile(sourceFile):
         open(targetFile, "wb").write(open(sourceFile, "rb").read())
         os.remove(sourceFile)
+
+
 
 
 

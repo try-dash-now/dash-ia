@@ -38,7 +38,7 @@ class HttpHandler(BaseHTTPRequestHandler):
             list = os.listdir(path)
         except os.error:
             self.send_error(404, "No permission to list directory")
-            return None
+            return ""
         list.sort(key=lambda a: a.lower())
         #f = StringIO()
         displaypath = cgi.escape(urllib.unquote(self.path))
@@ -124,6 +124,20 @@ class HttpHandler(BaseHTTPRequestHandler):
             indexpage= open(home+'dash.ico', 'r')
             encoded=indexpage.read()
             type =  "application/x-ico"
+        elif self.path.startswith('/log'):
+            path = os.path.abspath(root)
+            path = '/'.join([path, self.path])
+            if  os.path.isfile(path):
+                indexpage= open(path)
+                encoded=indexpage.read()
+                html = []
+                for line in encoded.split('\n'):
+                    html.append('<p>%s</p>'%line.replace('\r', '').replace('\n',''))
+                encoded= ''.join(html)
+            else:
+                encoded =self.list_dir(path, self.path)
+
+            #encoded = encoded.encode(encoding='utf_8')
         else:
             path = os.path.abspath(root)
             path = '/'.join([path, self.path])
@@ -266,11 +280,20 @@ class HttpHandler(BaseHTTPRequestHandler):
             script = req['script'][0]
             arg = req['arg'][0]
             if self.path =='/RunCase':
+                executefile = 't.py'
                 print(os.getcwd())
-                encoded=self.RunScript('t.py', [script, arg])
+                if os.path.exists('t.exe') and not os.path.exists(executefile):
+                    executefile='t.exe'
+
             elif self.path=='/RunSuite':
                 print(os.getcwd())
-                encoded=self.RunScript('runTask.py', [script, arg])
+                executefile = 'runTask.py'
+                print(os.getcwd())
+                if os.path.exists('runTask.exe') and not os.path.exists(executefile):
+                    executefile='runTask.exe'
+
+            encoded=self.RunScript(executefile, [script, arg])
+            print(encoded)
 
 
 

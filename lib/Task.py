@@ -43,7 +43,9 @@ class Task(object):
     CaseRangeStr= ''
     ArgStr= ''
     Report=[['index', 'case','TCP port', 'logdir', 'pid', 'start time', 'end time','duration','result']]
-    def __init__(self, config='./manualrun.cfg'):
+    def __init__(self, config=None):
+        if not config:
+            config ='./manualrun.cfg'
         from common import csvfile2dict
         self.RunCfg = csvfile2dict(config)
         import time
@@ -127,6 +129,12 @@ class Task(object):
             DebugWhenFailed= 'False'
 
         if cmd.find('t.py') !=-1 :  #cmd.startswith('r.py ') or
+            executefile = 't.py'
+            print(os.getcwd())
+            if os.path.exists('t.exe') and not os.path.exists(executefile):
+                executefile='t.exe'
+                exe_cmd =''
+                cmd = cmd.replace('t.py', 't.exe')
             exe_cmd =exe_cmd+ cmd+" -l "+logdir
             pp = subprocess.Popen(args = exe_cmd ,shell =True, stdin=pipe_input)
         else:
