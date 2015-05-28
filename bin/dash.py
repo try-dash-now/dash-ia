@@ -65,6 +65,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         self.Bind(wx.EVT_BUTTON, self.OnRunHTTPServer, self.buttons[0])
+        self.Bind(wx.EVT_BUTTON , self.OnRunScript, self.buttons[1])
         self.Bind(wx.EVT_TEXT_ENTER , self.onMainInput, self.MainInput)
         self.Bind(wx.EVT_BUTTON, self.onManualRun, self.buttons[3])
         #Layout sizers
@@ -147,6 +148,40 @@ class MyFrame(wx.Frame):
         import threading
         self.IAThread = threading.Thread(target=self.ManualRun)
         self.IAThread.start()
+    def OnRunScript(self,e):
+        line = str(self.MainInput.GetValue())
+
+
+        exe_cmd = line
+        tmp =sys.stdout
+        sys.stdout=self.MainOutput
+        if line.find('.py') != -1:
+            exe_cmd = 'python '+exe_cmd
+        import subprocess
+        import tempfile
+        pipe_input ,file_name_in =tempfile.mkstemp()
+        pipe_output ,file_name_out =tempfile.mkstemp()
+
+        pp = subprocess.Popen(exe_cmd,#sys.executable,
+                     #cwd = os.sep.join([os.getcwd(),'..']),
+                     stdin=pipe_input,
+                     stdout=pipe_output,
+                     shell=True
+                     )
+        print('PID: %d runcase(%s) has been launched, stdin(%s), stdout(%s)'%(pp.pid,exe_cmd,file_name_in,file_name_out))
+
+        import time
+        ChildRuning = True
+        while ChildRuning:
+            if pp.poll() is None:
+                interval = 1
+                time.sleep(interval)
+            else:
+                ChildRuning = False
+        returncode = pp.returncode
+        sys.stdout= tmp
+        print('PID: %d runcase(%s) ended with returncode(%d)'%(pp.pid,exe_cmd, returncode))
+        return 'PID: %d runcase(%s) ended with returncode(%d)'%(pp.pid,exe_cmd, returncode) #non-zero means failed
     def onMainInput(self,e):
         if self.bIARunning:
             line = str(self.MainInput.GetValue())
