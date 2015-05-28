@@ -43,17 +43,17 @@ else:
 
 
 aa = '''CMD'''
-from shell import shell
+from IAshell import IAshell
 
       
-i =shell('TC',bench, sutnames,manuallogdir )
+i =IAshell('TC',bench, sutnames,manuallogdir )
 
 #i.setmode('fun')
 #i.setsut('Sean3') 
 #i.RunCmd('showme')
 #i.RunCmd('showme money')
 print('#'*80)
-
+import traceback
 while i.InteractionRunning:
     try:
         i.cmdloop()

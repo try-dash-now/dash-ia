@@ -3,7 +3,10 @@ __author__ = 'Sean Yu'
 
 
 import os, sys
-
+pardir =os.path.dirname(os.path.realpath(os.getcwd()))
+#pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
+sys.path.append(os.path.sep.join([pardir,'lib']))
+print('\n'.join(sys.path))
 
 # begin wxGlade: dependencies
 import gettext
@@ -11,7 +14,12 @@ import re, string
 
 import wx
 class MyFrame(wx.Frame):
-    """ We simply derive a new class of Frame. """
+    webserver=None
+    weblogfilename=None
+    weblogfile=None
+    IAThread=None
+    bIARunning =False
+    ia = None
     def __init__(self, parent, title):
 
         self.dirname=''
@@ -40,8 +48,8 @@ class MyFrame(wx.Frame):
 
         self.sizer2 = wx.BoxSizer(wx.HORIZONTAL)
         self.buttons = []
-        self.buttonName= ['StartHttpServer', 'RunCase', 'RunSuite']
-        for i in range(0, 3):
+        self.buttonName= ['StartHttpServer', 'RunCase', 'RunSuite', 'InterAction']
+        for i in range(0, len(self.buttonName)):
             self.buttons.append(wx.Button(self, -1, self.buttonName[i]))
             self.sizer2.Add(self.buttons[i], 1, wx.EXPAND)
 
@@ -57,14 +65,17 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         self.Bind(wx.EVT_BUTTON, self.OnRunHTTPServer, self.buttons[0])
-
+        self.Bind(wx.EVT_TEXT_ENTER , self.onMainInput, self.MainInput)
+        self.Bind(wx.EVT_BUTTON, self.onManualRun, self.buttons[3])
         #Layout sizers
         self.SetSizer(self.sizer)
         self.SetAutoLayout(1)
         self.sizer.Fit(self)
         self.Show()
 
-
+    def info(self, msg):
+        self.MainOutput.AppendText(msg+'\n')
+        self.Show()
     def OnAbout(self,e):
         # Create a message dialog box
         dlg = wx.MessageDialog(self, " A sample editor \n in wxPython", "About Sample Editor", wx.OK)
@@ -85,14 +96,29 @@ class MyFrame(wx.Frame):
             f.close()
         dlg.Destroy()
     def OnRunHTTPServer(self,e):
-        import subprocess, tempfile,time
-        pipe_input ,file_name =tempfile.mkstemp()
+        if not self.webserver:
+            self.info('launching webserver on port 8080!')
+            import subprocess, tempfile,time
+            self.weblogfile, self.weblogfilename =tempfile.mkstemp()
+            self.info('web logfile is %s'%(self.weblogfilename))
+        else:
+            self.info('Killing webserver and restart it')
+            try:
+                self.weblogfile.close()
+            except Exception as e:
+                self.info('close web log file failed:'+str(e))
+            os.kill(self.webserver.pid)
+            self.info('Restarting web server on port 8080')
+            self.weblogfile, self.weblogfilename =tempfile.mkstemp()
+            self.info('web logfile is %s'%(self.weblogfilename))
+
+
         try:
             exe_cmd= 'python runWebServer.py'
-            pp = subprocess.Popen(args = exe_cmd ,shell =True, stdin=pipe_input)
+            pp = subprocess.Popen(args = exe_cmd ,shell =True, stdout=self.weblogfile)
         except:
             exe_cmd= 'runWebServer.exe'
-            pp = subprocess.Popen(args = exe_cmd,shell =True, stdin=pipe_input)
+            pp = subprocess.Popen(args = exe_cmd,shell =True, stdin=self.weblogfile)
 
         MaxCounter = 2
         first =True
@@ -102,15 +128,102 @@ class MyFrame(wx.Frame):
                 interval = 1
                 if first:
                     first=False
-                self.MainOutput.SetValue('launched http server on port 8080!')
+                self.info('launched http server on port 8080 completed!')
 
                 time.sleep(interval)
             else:
                 #return pp.returncode:
                 MaxCounter = 0
-                self.MainOutput.SetValue('Failed to launch http server on port 8080!')
-        self.Show(1)
+                self.info('Failed to launch http server on port 8080!')
+    def onManualRun(self, e):
+        if self.bIARunning:
+            self.bIARunning=False
+            self.buttons[3].SetName('ManualRun')
+        else:
+            self.bIARunning =True
+            self.buttons[3].SetName('Stop ManualRun')
 
+
+        import threading
+        self.IAThread = threading.Thread(target=self.ManualRun)
+        self.IAThread.start()
+    def onMainInput(self,e):
+        if self.bIARunning:
+            line = str(self.MainInput.GetValue())
+            line = self.ia.precmd(line)
+            line = self.ia.precmd(line)
+            stop = self.ia.onecmd(line)
+            stop = self.ia.postcmd(stop, line)
+            self.ia.postloop()
+            self.MainInput.SetValue('')
+            self.Show()
+
+            #self.ia.RunCmd(cmd)
+    def ManualRun(self):
+        import time
+        suts={}
+        casename=''
+
+        from common import csvfile2dict
+        runcfg = csvfile2dict('./manualrun.cfg')
+        dbname =runcfg.get('db')
+        tcpportpool = runcfg.get('tcppool')
+        benchdir = runcfg.get('benchdir')
+        defaultlogdir = runcfg.get('logdir')
+        manuallogdir = runcfg.get('manuallogdir')
+        casename = 'tc'+time.strftime("%Y-%m-%d:%H:%M:%S", time.localtime())
+
+        argv = self.MainInput.GetValue()
+        #argv = ''.join(argv)
+        #argv = str(argv)[1:]
+
+        if  argv.strip()=='':
+            self.bIARunning=False
+            self.buttons[3].SetName('ManualRun')
+            return
+
+        argv=argv.split(' ')
+        try:
+            argv =[x for x in argv if x!='']
+        except:
+            pass
+        bench = str(argv[0])
+        sutnames = argv[1:len(argv)]
+
+        benchname = bench
+        import os,sys
+        #    def __init__(self,name,suts,CasePort=50001, steps=[[],[],[]],mode='FULL',DebugWhenFailed=False,logdir='./',caseconfigfile='./case.cfg'):
+        if benchname.find(os.sep)==-1:
+            bench= '%s%s%s'%(benchdir, os.sep,benchname)
+        else:
+            bench = benchname
+
+
+        pardir =os.path.dirname(os.path.realpath(os.getcwd()))
+        #pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
+        sys.path.append(os.path.sep.join([pardir,'lib']))
+        print('\n'.join(sys.path))
+        import time
+        from common import csvfile2dict
+        print('CWD:',os.getcwd())
+        from IAshell import IAshell
+        tmp =sys.stdout
+        sys.stdout = self.MainOutput
+        self.ia =IAshell('TC',bench, sutnames,manuallogdir, outputfile=self.MainOutput )
+
+
+        print('#'*80)
+
+
+        while self.bIARunning:
+            try:
+                self.Show()
+                time.sleep(.1)
+            except Exception as e:
+                msg = traceback.format_exc()
+                self.info(msg)
+                self.info(msg)
+        sys.stdout =tmp
 
 app = wx.App(False)
 frame = MyFrame(None, 'DasH')

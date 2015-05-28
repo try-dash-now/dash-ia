@@ -59,7 +59,7 @@ def csvstring2array(csvstring):
 def csvfile2array(csvfile):
     a=[]
     if os.name!='nt':
-        f= open(csvfile,'r', newline='')
+        f= open(csvfile, 'r', newline='')
     else:
         f = open(csvfile,'r')
     #with open(csvfile,'r', newline='') as f:

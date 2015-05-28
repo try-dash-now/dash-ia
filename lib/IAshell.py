@@ -4,7 +4,7 @@ import telnetlib
 import WinSession # for py2exe bin distribution
 import traceback
 from Case import Case
-import sys
+import sys,os
 print(sys.path)
 
 import threading
@@ -16,7 +16,7 @@ import json
 import re
 import time
 from cmd import Cmd
-class shell(Cmd):
+class IAshell(Cmd, object):
     tabend='enable'
     lastCmdIssueTime = 0.0
     sutname='tc'
@@ -147,7 +147,11 @@ class shell(Cmd):
         self.tc.EndCase(force=True, killProcess=True)
         exit()
 
-    def __init__(self,casename,bench, sutnames , logfiledir):
+    def __init__(self,casename,bench, sutnames , logfiledir, outputfile =None):
+        if outputfile:
+            pass
+        else:
+            outputfile=sys.stdout
         self.benchinfo = bench2dict(bench)
         #self.benchinfo = benchinfo
         self.casename =casename
@@ -157,7 +161,7 @@ class shell(Cmd):
         steps=[[],[],[]]
         mode ='FULL'
         self.tc= Case(casename,self.sut,steps=[[],[],[]],mode='FULL',DebugWhenFailed=False,logdir=logfiledir,caseconfigfile='../lib/case.cfg')
-        self.thQureyOut = threading.Thread(target=self.QureyOutput)
+        self.thQureyOut = threading.Thread(target=self.QureyOutput,args = [outputfile] )
         self.thQureyOut.start()
         self.client ='interaction'
         self.tc.AddClient(self.client)
@@ -238,15 +242,20 @@ class shell(Cmd):
         #print('empty line')
         #self.RunCmd('')
 
-    def QureyOutput(self):
+    def QureyOutput(self, filehandler=None):
 
+        if not filehandler:
+            filehandler =sys.stdout
         while self.InteractionRunning:
             if not self.PauseOut:
                 if self.sutname!='tc':
                     output = self.tc.RequestSUTOutput(self.client, self.sutname)
                     if len(output)!=0 and self.UpdatingOutput :
+                        tmp =sys.stdout
+                        sys.stdout= filehandler
                         print(os.linesep+'\t'+output.replace('\n', '\n\t') )
                         print(self.prompt)
+                        sys.stdout=tmp
             if len(self.InteractionOutput)   :
                 print(self.InteractionOutput)
             self.InteractionOutput=''
@@ -316,7 +325,7 @@ class shell(Cmd):
                 if len(cmd)>0:
                     fun = cmd[0]
                     i_arg = cmd[1:]
-                    fun = self.__getattribute__(fun)
+                    fun =self.__getattribute__(fun) #self.__getattribute__(fun)
             else:
                 reFun= re.compile('\s*(sut\.)(.*)', re.DOTALL)
                 mfun = re.match(reFun, data)
