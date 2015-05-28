@@ -13,6 +13,7 @@ import gettext
 import re, string
 
 import wx
+
 class MyFrame(wx.Frame):
     webserver=None
     weblogfilename=None
@@ -181,7 +182,11 @@ class MyFrame(wx.Frame):
         returncode = pp.returncode
         sys.stdout= tmp
         print('PID: %d runcase(%s) ended with returncode(%d)'%(pp.pid,exe_cmd, returncode))
+        f = open(file_name_out, 'r')
+        self.MainOutput.SetValue(f.read())
+        f.close()
         return 'PID: %d runcase(%s) ended with returncode(%d)'%(pp.pid,exe_cmd, returncode) #non-zero means failed
+
     def onMainInput(self,e):
         if self.bIARunning:
             line = str(self.MainInput.GetValue())
