@@ -14,13 +14,16 @@ print('\n'.join(sys.path))
 
 from distutils.core import setup
 import py2exe
-
-dist = setup(console=["../bin/ia.py",
+dll_excludes = ['libgdk-win32-2.0-0.dll', 'libgobject-2.0-0.dll', 'tcl84.dll',
+                'tk84.dll','MSVCP90.dll']
+dist = setup(
+    console=["../bin/ia.py",
                       "../bin/runTask.py",
                       "../bin/runWebServer.py",
                       "../bin/t.py",
                       ],
-      data_files= ['../bin/manualrun.cfg',
+    windows = ['../bin/dash.py'],
+    data_files= ['../bin/manualrun.cfg',
                    '../bin/run.cfg',
                    ( 'bench',['../bench/local']),
                    ('case', []),
@@ -34,9 +37,29 @@ dist = setup(console=["../bin/ia.py",
                    ( 'lib/html', []),
                    ( 'lib/html', ['../lib/html/index.html']),
                    ( 'lib/html', ['../lib/html/dash.ico']),
-                    ( 'log/manual', []),]
+                    ( 'log/manual', []),
+                   ],
+    options = {"py2exe":
+                   {
+                       "compressed": 2,
+                      "optimize": 2,
+                      "includes":[],# includes,
+                      "excludes":[],# excludes,
+                      "packages": [],#packages,
+                      "dll_excludes": dll_excludes,
+                      "bundle_files": 1,
+                      "dist_dir": "dist",
+                      "xref": False,
+                      "skip_archive": False,
+                      "ascii": False,
+                      "custom_boot_script": '',
+                    }
+               }
 
 )
+
+
+
 folder = './dist'
 for op in sys.argv:
 
