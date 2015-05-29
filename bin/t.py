@@ -2,7 +2,8 @@
 # -*- coding:  UTF-8 -*-
 import os
 import sys
-pardir =os.path.dirname(os.path.realpath(__file__))
+
+pardir =os.path.dirname(os.path.realpath(os.getcwd()))
 pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
 sys.path.append(os.path.sep.join([pardir,'lib']))
 if __name__ == "__main__":
@@ -16,9 +17,9 @@ if __name__ == "__main__":
         casedir = runcfg.get('casedir')
         suitedir= runcfg.get('suitedir')
         benchdir = runcfg.get('benchdir')
-        defaultlogdir = runcfg.get('logdir')
+        defaultlogdir = os.path.abspath(runcfg.get('logdir'))
         import sys
-        print('format: run str_bench_name str_feature_name str_case_name [str_parameter1,str_parameter2 ....str_parameterN, bool_TroubleshootingWhenFail,str_case_log_dir] ')
+        print('format: t.py str_feature_name str_bench_name str_case_name [str_parameter1,str_parameter2 ....str_parameterN, bool_TroubleshootingWhenFail,str_case_log_dir] ')
         argvlen= len(sys.argv)
         if argvlen>6:
             pass
@@ -30,26 +31,26 @@ if __name__ == "__main__":
             sys.argv.append(False)
             sys.argv.append(defaultlogdir)
         elif argvlen ==4:
-            sys.argv.append(str(os.path.basename(sys.argv[2])).replace(".csv", ""))
+            sys.argv.append(str(os.path.basename(sys.argv[1])).replace(".csv", ""))
             sys.argv.append("FULL")
             sys.argv.append(False)
             sys.argv.append(defaultlogdir)
         elif argvlen ==3:
-            sys.argv.append(str(os.path.basename(sys.argv[2])).replace(".csv", ""))
+            sys.argv.append(str(os.path.basename(sys.argv[1])).replace(".csv", ""))
             sys.argv.append("FULL")
             sys.argv.append(False)
             sys.argv.append(defaultlogdir)
         else:
-            print ('''format error, example: run.py bench feature [case mode logdir]
+            print ('''format error, example: run.py  feature bench [case mode logdir]
 case--case name, format is "[casename]"default is the feature file name without extension
 mode--default is full, is one of [full,setup,run,teardown,setuprun,runteardown,setupteardown]
 logdir--the log dir ,default is ../html/log/tmp''')
         print (sys.argv)
-        bench= '%s%s%s'%(benchdir, os.sep,sys.argv[1])
+        bench= '%s%s%s'%(benchdir, os.sep,sys.argv[2])
         if sys.argv[2].find(os.sep)!=-1:
-            feature=sys.argv[2]
+            feature=sys.argv[1]
         else:
-            feature= '%s%s%s'%(casedir, os.sep,sys.argv[2])
+            feature= '%s%s%s'%(casedir, os.sep,sys.argv[1])
         case=sys.argv[3]
         mode= sys.argv[4]
         TroulbeshootingWhenCaseFailed = sys.argv[len(sys.argv)-2]
@@ -70,6 +71,6 @@ logdir--the log dir ,default is ../html/log/tmp''')
         print(msg)
         print(e)
         print ("!!!!!!!!!!!!!!!!!!!!!!!! CASE FAIL !!!!!!!!!!!!!!!!!!!!!!!!")
-
-        exit(1)
+        os._exit(1)
+        #exit(1)
 
