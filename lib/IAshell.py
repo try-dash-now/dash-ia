@@ -144,8 +144,11 @@ class IAshell(Cmd, object):
         if not name :
             name = 'tc'
         self.tc.Name = name
-        self.tc.EndCase(force=True, killProcess=True)
-        exit()
+        print(self.tc.LogDir)
+        self.InteractionRunning =False
+        self.tc.EndCase(force=True, killProcess=False)
+
+        #exit()
 
     def __init__(self,casename,bench, sutnames , logfiledir, outputfile =None):
         if outputfile:
@@ -193,11 +196,14 @@ class IAshell(Cmd, object):
         if stop!=None and len(str(stop))!=0:
             self.InteractionOutput+='\n'+self.prompt+str(stop)+self.prompt
             #print(self.InteractionOutput,end='')
-        return None
+
+        stop = not self.InteractionRunning
+        return stop
 
 
     def completedefault(self, *ignored):
         #print(ignored)
+
         if self.sutname!='tc':
             #
             self.onecmd(ignored[1]+'\t')
@@ -209,7 +215,9 @@ class IAshell(Cmd, object):
 
     def precmd(self,line):
         #print('line:',line)
-        temp =line.strip().lstrip()
+        linetemp = line.strip()
+
+
         if self.sutname!='tc':
             if line==' ':
                 self.RunCmd(line)

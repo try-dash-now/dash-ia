@@ -67,8 +67,10 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         self.Bind(wx.EVT_BUTTON, self.OnRunHTTPServer, self.buttons[0])
         self.Bind(wx.EVT_BUTTON , self.OnRunScript, self.buttons[1])
-        self.Bind(wx.EVT_TEXT_ENTER , self.onMainInput, self.MainInput)
+        self.MainInput.Bind(wx.EVT_KEY_DOWN, self.onEnter)
+        #self.Bind(wx.EVT_TEXT_ENTER , self.onMainInput, self.MainInput)
         self.Bind(wx.EVT_BUTTON, self.onManualRun, self.buttons[3])
+        self.Bind(wx.EVT_KEY_DOWN, self.onEnter, self.MainInput)
         #Layout sizers
         self.SetSizer(self.sizer)
         self.SetAutoLayout(1)
@@ -85,6 +87,10 @@ class MyFrame(wx.Frame):
         dlg.Destroy() # finally destroy it when finished.
 
     def OnExit(self,e):
+        if self.bIARunning or self.IAThread:
+            self.bIARunning=False
+            self.ia.do_Exit()
+
         self.Close(True)  # Close the frame.
 
     def OnOpen(self,e):
@@ -138,6 +144,7 @@ class MyFrame(wx.Frame):
                 MaxCounter = 0
                 self.info('Failed to launch http server on port 8080!')
     def onManualRun(self, e):
+
         if self.bIARunning:
             self.bIARunning=False
             self.buttons[3].SetName('ManualRun')
@@ -149,6 +156,24 @@ class MyFrame(wx.Frame):
         import threading
         self.IAThread = threading.Thread(target=self.ManualRun)
         self.IAThread.start()
+    def onEnter(self, e):
+        """"""
+        event =e
+        keycode = e.GetKeyCode()
+        if keycode in [ wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_TAB]:
+            if self.bIARunning:
+                line = str(self.MainInput.GetValue())
+                if keycode ==wx.WXK_TAB:
+                    line = line+'\t'
+                line = self.ia.precmd(line)
+                line = self.ia.precmd(line)
+                stop = self.ia.onecmd(line)
+                stop = self.ia.postcmd(stop, line)
+                self.ia.postloop()
+                self.MainInput.SetValue('')
+                self.Show()
+        event.EventObject.Navigate()
+        event.Skip()
     def OnRunScript(self,e):
         line = str(self.MainInput.GetValue())
 
@@ -195,7 +220,7 @@ class MyFrame(wx.Frame):
             stop = self.ia.onecmd(line)
             stop = self.ia.postcmd(stop, line)
             self.ia.postloop()
-            self.MainInput.SetValue('')
+
             self.Show()
 
             #self.ia.RunCmd(cmd)
@@ -216,7 +241,7 @@ class MyFrame(wx.Frame):
         argv = self.MainInput.GetValue()
         #argv = ''.join(argv)
         #argv = str(argv)[1:]
-
+        self.MainInput.SetValue('')
         if  argv.strip()=='':
             self.bIARunning=False
             self.buttons[3].SetName('ManualRun')
@@ -249,20 +274,23 @@ class MyFrame(wx.Frame):
         from IAshell import IAshell
         tmp =sys.stdout
         sys.stdout = self.MainOutput
+        self.bIARunning =True
         self.ia =IAshell('TC',bench, sutnames,manuallogdir, outputfile=self.MainOutput )
 
 
         print('#'*80)
 
-
-        while self.bIARunning:
-            try:
-                self.Show()
-                time.sleep(.1)
-            except Exception as e:
-                msg = traceback.format_exc()
-                self.info(msg)
-                self.info(msg)
+        try:
+            while self.bIARunning:
+                try:
+                    self.Show()
+                    time.sleep(.1)
+                except Exception as e:
+                    msg = traceback.format_exc()
+                    self.info(msg)
+                    self.info(msg)
+        except:
+            pass
         sys.stdout =tmp
 
 app = wx.App(False)
