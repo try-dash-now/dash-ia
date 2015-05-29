@@ -215,8 +215,8 @@ class IAshell(Cmd, object):
 
     def precmd(self,line):
         #print('line:',line)
-        linetemp = line.strip()
-
+        #linetemp = line.strip()
+        temp =line.strip().lstrip()
 
         if self.sutname!='tc':
             if line==' ':
