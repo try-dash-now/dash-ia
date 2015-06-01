@@ -92,6 +92,12 @@ class MyFrame(wx.Frame):
         if self.bIARunning or self.IAThread:
             self.bIARunning=False
             self.ia.do_Exit()
+        if self.webserver:
+            try:
+                os.kill(self.webserver.pid)
+            except:
+                pass
+
 
         self.Close(True)  # Close the frame.
 
@@ -123,12 +129,15 @@ class MyFrame(wx.Frame):
             self.info('web logfile is %s'%(self.weblogfilename))
 
 
-        try:
+        if os.path.exists("runWebServer.py"):
+
             exe_cmd= 'python runWebServer.py'
             pp = subprocess.Popen(args = exe_cmd ,shell =True, stdout=self.weblogfile)
-        except:
-            exe_cmd= 'runWebServer.exe'
-            pp = subprocess.Popen(args = exe_cmd,shell =True, stdin=self.weblogfile)
+        else:
+            self.info('try to run executable file')
+            exe_cmd= os.getcwd()+ '/runWebServer.exe'
+            self.info(exe_cmd)
+            pp = subprocess.Popen(args = exe_cmd,shell =False, stdout=self.weblogfile,creationflags=0x08000000)
 
         MaxCounter = 2
         first =True
@@ -139,10 +148,11 @@ class MyFrame(wx.Frame):
                 if first:
                     first=False
                 self.info('launched http server on port 8080 completed!')
-
+                self.webserver = pp
                 time.sleep(interval)
             else:
                 #return pp.returncode:
+                self.webserver=None
                 MaxCounter = 0
                 self.info('Failed to launch http server on port 8080!')
     def onManualRun(self, e):
