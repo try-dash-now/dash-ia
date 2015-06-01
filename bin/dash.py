@@ -24,6 +24,7 @@ class MyFrame(wx.Frame):
     def __init__(self, parent, title):
 
         self.dirname=''
+        #ico = wx.Icon('../lib/html/dash.ico', wx.BITMAP_TYPE_ICO)
 
         # A "-1" in the size parameter instructs wxWidgets to use the default size.
         # In this case, we select 200px width and the default height.
@@ -31,7 +32,8 @@ class MyFrame(wx.Frame):
         self.MainOutput = wx.TextCtrl(self, style=wx.TE_MULTILINE)
         self.MainOutput.SetValue('output')
         self.MainInput = wx.TextCtrl(self)
-
+        self.icon = wx.Icon('../lib/html/dash.ico', wx.BITMAP_TYPE_ICO)
+        self.SetIcon(self.icon)
         self.CreateStatusBar() # A Statusbar in the bottom of the window
 
         # Setting up the menu.
