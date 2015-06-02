@@ -30,7 +30,7 @@ class MyFrame(wx.Frame):
         # A "-1" in the size parameter instructs wxWidgets to use the default size.
         # In this case, we select 200px width and the default height.
         wx.Frame.__init__(self, parent, title=title, size=(200,-1))
-        self.MainOutput = wx.TextCtrl(self, style=wx.TE_MULTILINE)
+        self.MainOutput = wx.TextCtrl(self, style=wx.TE_MULTILINE|wx.TE_READONLY)
         self.MainOutput.SetValue('output')
         self.MainInput = wx.TextCtrl(self)
         self.icon = wx.Icon('../lib/html/dash.ico', wx.BITMAP_TYPE_ICO)
@@ -65,6 +65,8 @@ class MyFrame(wx.Frame):
         self.sizer.Add(self.sizer2, 0, wx.EXPAND)
 
         # Events.
+
+        #self.Bind()#, self.MainOutput
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
@@ -75,11 +77,14 @@ class MyFrame(wx.Frame):
         #self.Bind(wx.EVT_TEXT_ENTER , self.onMainInput, self.MainInput)
         self.Bind(wx.EVT_BUTTON, self.onManualRun, self.buttons[3])
         self.Bind(wx.EVT_KEY_DOWN, self.onEnter, self.MainInput)
+        self.MainInput.SetFocus()
+        self.MainOutput.Bind(wx.EVT_KILL_FOCUS, self.OnSelection)
         #Layout sizers
         self.SetSizer(self.sizer)
         self.SetAutoLayout(1)
         self.sizer.Fit(self)
         self.Show()
+
 
     def info(self, msg):
         self.MainOutput.AppendText(msg+'\n')
@@ -197,6 +202,18 @@ class MyFrame(wx.Frame):
         import threading
         self.IAThread = threading.Thread(target=self.ManualRun)
         self.IAThread.start()
+    def OnSelection(self,e):
+        if self.bIARunning:
+
+            select= self.MainOutput.GetStringSelection()
+            self.MainOutput.SetSelection(0,0)
+            self.MainInput.SetValue("Expect('%s',1)"%select)
+            self.MainInput.SetFocus()
+            #self.MainOutput.Bind(wx.EVT_KILL_FOCUS, self.OnSelection)
+            self.Refresh()
+        e.EventObject.Navigate()
+        e.Skip()
+
     def onEnter(self, e):
         """"""
         event =e
