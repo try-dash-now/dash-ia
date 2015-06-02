@@ -64,6 +64,7 @@ class MyFrame(wx.Frame):
         self.sizer.Add(self.sizer2, 0, wx.EXPAND)
 
         # Events.
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
         self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
@@ -78,6 +79,7 @@ class MyFrame(wx.Frame):
         self.SetAutoLayout(1)
         self.sizer.Fit(self)
         self.Show()
+        self.SendReport()
 
     def info(self, msg):
         self.MainOutput.AppendText(msg+'\n')
@@ -87,7 +89,18 @@ class MyFrame(wx.Frame):
         dlg = wx.MessageDialog(self, " A sample editor \n in wxPython", "About Sample Editor", wx.OK)
         dlg.ShowModal() # Shows it
         dlg.Destroy() # finally destroy it when finished.
+    def OnClose(self,e): #fix: RuntimeError: maximum recursion depth exceeded while calling a Python object
+        if self.bIARunning or self.IAThread:
+            self.bIARunning=False
+            self.ia.do_Exit()
+        if self.webserver:
+            try:
+                os.kill(self.webserver.pid)
+            except:
+                pass
 
+        self.Destroy()
+        #self.Close(True)  # Close the frame.
     def OnExit(self,e):
         if self.bIARunning or self.IAThread:
             self.bIARunning=False
@@ -155,6 +168,45 @@ class MyFrame(wx.Frame):
                 self.webserver=None
                 MaxCounter = 0
                 self.info('Failed to launch http server on port 8080!')
+    def SendReport(self):
+        import os
+        print (os.getlogin())
+        import getpass
+        getpass.getuser()
+
+        # Import smtplib for the actual sending function
+        import smtplib
+
+        # Import the email modules we'll need
+        from email.mime.text import MIMEText
+
+    def SendReport(self):
+        try:
+            ToWho = 'sean.yu@calix.com'
+            #get mail list, it should be in csv format
+
+            from socket import *
+            domain = getfqdn()
+            import getpass
+            From = "%s@%s"%(getpass.getuser(), domain)
+
+            # Send the message via our own SMTP server, but don't include the
+            # envelope header.
+            import smtplib
+            s = smtplib.SMTP('localhost')
+            msg = MIMEText(msg)
+            msg['Subject'] = 'dash.info'
+            msg['To']=ToWho
+            print "to list: ",msg['To']
+
+
+            if str(From).find('@')==-1:
+                From = From+domain
+            s.sendmail(From, ToWho, msg.as_string())
+            s.quit()
+        except:
+            pass
+
     def onManualRun(self, e):
 
         if self.bIARunning:
