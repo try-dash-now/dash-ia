@@ -13,7 +13,7 @@ import gettext
 import re, string
 
 import wx
-
+import signal
 class MyFrame(wx.Frame):
     webserver=None
     weblogfilename=None
@@ -22,7 +22,8 @@ class MyFrame(wx.Frame):
     bIARunning =False
     ia = None
     def __init__(self, parent, title):
-
+        if self.TrialExpired():
+            return
         self.dirname=''
         #ico = wx.Icon('../lib/html/dash.ico', wx.BITMAP_TYPE_ICO)
 
@@ -79,7 +80,6 @@ class MyFrame(wx.Frame):
         self.SetAutoLayout(1)
         self.sizer.Fit(self)
         self.Show()
-        self.SendReport()
 
     def info(self, msg):
         self.MainOutput.AppendText(msg+'\n')
@@ -95,7 +95,7 @@ class MyFrame(wx.Frame):
             self.ia.do_Exit()
         if self.webserver:
             try:
-                os.kill(self.webserver.pid)
+                os.kill(self.webserver.pid, signal.SIGTERM)
             except:
                 pass
 
@@ -107,7 +107,7 @@ class MyFrame(wx.Frame):
             self.ia.do_Exit()
         if self.webserver:
             try:
-                os.kill(self.webserver.pid)
+                os.kill(self.webserver.pid,signal.SIGTERM)
             except:
                 pass
 
@@ -132,18 +132,11 @@ class MyFrame(wx.Frame):
             self.info('web logfile is %s'%(self.weblogfilename))
         else:
             self.info('Killing webserver and restart it')
-            try:
-                self.weblogfile.close()
-            except Exception as e:
-                self.info('close web log file failed:'+str(e))
-            os.kill(self.webserver.pid)
+            os.kill(self.webserver.pid ,signal.SIGTERM)
             self.info('Restarting web server on port 8080')
             self.weblogfile, self.weblogfilename =tempfile.mkstemp()
             self.info('web logfile is %s'%(self.weblogfilename))
-
-
         if os.path.exists("runWebServer.py"):
-
             exe_cmd= 'python runWebServer.py'
             pp = subprocess.Popen(args = exe_cmd ,shell =True, stdout=self.weblogfile)
         else:
@@ -168,44 +161,28 @@ class MyFrame(wx.Frame):
                 self.webserver=None
                 MaxCounter = 0
                 self.info('Failed to launch http server on port 8080!')
-    def SendReport(self):
-        import os
-        print (os.getlogin())
-        import getpass
-        getpass.getuser()
 
-        # Import smtplib for the actual sending function
-        import smtplib
+    def TrialExpired(self):
 
-        # Import the email modules we'll need
-        from email.mime.text import MIMEText
-
-    def SendReport(self):
-        try:
-            ToWho = 'sean.yu@calix.com'
-            #get mail list, it should be in csv format
-
-            from socket import *
-            domain = getfqdn()
-            import getpass
-            From = "%s@%s"%(getpass.getuser(), domain)
-
-            # Send the message via our own SMTP server, but don't include the
-            # envelope header.
-            import smtplib
-            s = smtplib.SMTP('localhost')
-            msg = MIMEText(msg)
-            msg['Subject'] = 'dash.info'
-            msg['To']=ToWho
-            print "to list: ",msg['To']
+        import time
+        time.ctime()
+        from datetime import datetime
+        createtime=os.path.getctime('./')
+        print(time.ctime(createtime))
 
 
-            if str(From).find('@')==-1:
-                From = From+domain
-            s.sendmail(From, ToWho, msg.as_string())
-            s.quit()
-        except:
-            pass
+        now = time.time()
+        #now  = datetime.now()
+        delta = now -createtime
+        print(time.ctime(now))
+        if delta> 30*24*3600:
+            wx.MessageBox('Trial Expired!', 'Info',
+                wx.OK )
+            return True
+        return False
+
+
+
 
     def onManualRun(self, e):
 
