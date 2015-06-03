@@ -6,8 +6,12 @@ created 2015/5/22 
 '''
 from SocketServer import ThreadingMixIn
 from BaseHTTPServer import HTTPServer,BaseHTTPRequestHandler
-import os
+import os,sys
 import StringIO, cgi , urllib
+pardir =os.path.dirname(os.path.realpath(os.getcwd()))
+libpath = os.path.sep.join([pardir,'lib'])
+if libpath not in sys.path:
+    sys.path.insert(0,libpath)
 
 class HttpHandler(BaseHTTPRequestHandler):
     logger=None
@@ -18,8 +22,8 @@ class HttpHandler(BaseHTTPRequestHandler):
     rootdir = None
     def __del__(self):
         #self.hdrlog.close()
-        print('end http server')
-
+        #print('end http server')
+        pass
 
 
 
@@ -179,7 +183,9 @@ class HttpHandler(BaseHTTPRequestHandler):
             if not args:
                 args =[]
 
+
             exe_cmd = '%s %s'%(script, ' '.join(args))
+            print('Run Script:'+exe_cmd)
             if script.find('.py') != -1:
                 exe_cmd = 'python '+exe_cmd
             import subprocess
@@ -293,7 +299,8 @@ class HttpHandler(BaseHTTPRequestHandler):
                     executefile='runTask.exe'
 
             encoded=self.RunScript(executefile, [script, arg])
-            print(encoded)
+
+            print('result of '+ executefile+ ' ' + arg+ ' '+str(encoded))
 
 
 

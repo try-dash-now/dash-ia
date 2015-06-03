@@ -4,15 +4,16 @@ __author__ = 'Sean Yu'
 
 import os, sys
 pardir =os.path.dirname(os.path.realpath(os.getcwd()))
-#pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
-sys.path.append(os.path.sep.join([pardir,'lib']))
-print('\n'.join(sys.path))
-
+libpath = os.path.sep.join([pardir,'lib'])
+if libpath not in sys.path:
+    sys.path.insert(0,libpath)
 # begin wxGlade: dependencies
 import gettext
 import re, string
 
 import wx
+
+ID_LAUNCH_HTTP = wx.NewId()
 import signal
 class MyFrame(wx.Frame):
     webserver=None
@@ -40,6 +41,7 @@ class MyFrame(wx.Frame):
         # Setting up the menu.
         filemenu= wx.Menu()
         menuOpen = filemenu.Append(wx.ID_OPEN, "&Open"," Open a file to edit")
+        menuLaunchHttp = filemenu.Append(ID_LAUNCH_HTTP, "&Launch HTTP server"," Launch HTTP server")
         menuAbout= filemenu.Append(wx.ID_ABOUT, "&About"," Information about this program")
         menuExit = filemenu.Append(wx.ID_EXIT,"E&xit"," Terminate the program")
 
@@ -50,19 +52,19 @@ class MyFrame(wx.Frame):
 
 
 
-        self.sizer2 = wx.BoxSizer(wx.HORIZONTAL)
-        self.buttons = []
-        self.buttonName= ['StartHttpServer', 'RunCase', 'RunSuite', 'InterAction']
-        for i in range(0, len(self.buttonName)):
-            self.buttons.append(wx.Button(self, -1, self.buttonName[i]))
-            self.sizer2.Add(self.buttons[i], 1, wx.EXPAND)
+        # self.sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        # self.buttons = []
+        # self.buttonName= ['StartHttpServer', 'RunCase', 'RunSuite', 'InterAction']
+        # for i in range(0, len(self.buttonName)):
+        #     self.buttons.append(wx.Button(self, -1, self.buttonName[i]))
+        #     self.sizer2.Add(self.buttons[i], 1, wx.EXPAND)
 
         # Use some sizers to see layout options
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(self.MainOutput, 1,wx.ALL| wx.EXPAND)
 
         self.sizer.Add(self.MainInput, 0 ,wx.ALL|wx.EXPAND, 5 )
-        self.sizer.Add(self.sizer2, 0, wx.EXPAND)
+        #self.sizer.Add(self.sizer2, 0, wx.EXPAND)
 
         # Events.
 
@@ -71,11 +73,11 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
-        self.Bind(wx.EVT_BUTTON, self.OnRunHTTPServer, self.buttons[0])
-        self.Bind(wx.EVT_BUTTON , self.OnRunScript, self.buttons[1])
+        self.Bind(wx.EVT_MENU, self.OnRunHTTPServer, menuLaunchHttp)
+        #self.Bind(wx.EVT_BUTTON , self.OnRunScript, self.buttons[1])
         self.MainInput.Bind(wx.EVT_KEY_DOWN, self.onEnter)
         #self.Bind(wx.EVT_TEXT_ENTER , self.onMainInput, self.MainInput)
-        self.Bind(wx.EVT_BUTTON, self.onManualRun, self.buttons[3])
+        #self.Bind(wx.EVT_BUTTON, self.onManualRun, self.buttons[3])
         self.Bind(wx.EVT_KEY_DOWN, self.onEnter, self.MainInput)
         self.MainInput.SetFocus()
         self.MainOutput.Bind(wx.EVT_KILL_FOCUS, self.OnSelection)
@@ -84,14 +86,24 @@ class MyFrame(wx.Frame):
         self.SetAutoLayout(1)
         self.sizer.Fit(self)
         self.Show()
-
+        sys.stdout = self.MainOutput
+        self.Maximize(True)
 
     def info(self, msg):
         self.MainOutput.AppendText(msg+'\n')
         self.Show()
     def OnAbout(self,e):
         # Create a message dialog box
-        dlg = wx.MessageDialog(self, " A sample editor \n in wxPython", "About Sample Editor", wx.OK)
+        txt = '''
+        this is an automation framework created by Sean Yu.
+        It provides:
+         1. launch test remotely
+         2. check test result/report remotely
+         3. create HTML test report
+         4. Record and Replay: an interaction way to create test case
+         5. Device/SUT Oriented structure--easy to extend and add more device/SUT
+        '''
+        dlg = wx.MessageDialog(self, txt, "About DasH", wx.OK)
         dlg.ShowModal() # Shows it
         dlg.Destroy() # finally destroy it when finished.
     def OnClose(self,e): #fix: RuntimeError: maximum recursion depth exceeded while calling a Python object
@@ -130,9 +142,10 @@ class MyFrame(wx.Frame):
             f.close()
         dlg.Destroy()
     def OnRunHTTPServer(self,e):
+        import subprocess, tempfile,time
         if not self.webserver:
             self.info('launching webserver on port 8080!')
-            import subprocess, tempfile,time
+
             self.weblogfile, self.weblogfilename =tempfile.mkstemp()
             self.info('web logfile is %s'%(self.weblogfilename))
         else:
@@ -152,20 +165,24 @@ class MyFrame(wx.Frame):
 
         MaxCounter = 2
         first =True
+        self.webserver = pp
+        respone = 'launched http server on port 8080!'
         while MaxCounter:
             MaxCounter-=1
             if pp.poll() is None:
                 interval = 1
                 if first:
                     first=False
-                self.info('launched http server on port 8080 completed!')
-                self.webserver = pp
+                #
+
                 time.sleep(interval)
             else:
                 #return pp.returncode:
                 self.webserver=None
                 MaxCounter = 0
-                self.info('Failed to launch http server on port 8080!')
+                respone ='Failed to launch http server on port 8080!'
+
+        self.info(respone)
 
     def TrialExpired(self):
 
@@ -193,10 +210,10 @@ class MyFrame(wx.Frame):
 
         if self.bIARunning:
             self.bIARunning=False
-            self.buttons[3].SetName('ManualRun')
+            #self.buttons[3].SetName('ManualRun')
         else:
             self.bIARunning =True
-            self.buttons[3].SetName('Stop ManualRun')
+            #self.buttons[3].SetName('Stop ManualRun')
 
 
         import threading
@@ -204,7 +221,6 @@ class MyFrame(wx.Frame):
         self.IAThread.start()
     def OnSelection(self,e):
         if self.bIARunning:
-
             select= self.MainOutput.GetStringSelection()
             self.MainOutput.SetSelection(0,0)
             self.MainInput.SetValue("Expect('%s',1)"%select)
@@ -219,7 +235,8 @@ class MyFrame(wx.Frame):
         event =e
         keycode = e.GetKeyCode()
         if keycode in [ wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_TAB]:
-            if self.bIARunning:
+
+            if self.bIARunning and self.ia.tc.IsAlive():
                 line = str(self.MainInput.GetValue())
                 if keycode ==wx.WXK_TAB:
                     line = line+'\t'
@@ -230,6 +247,9 @@ class MyFrame(wx.Frame):
                 self.ia.postloop()
                 self.MainInput.SetValue('')
                 self.Show()
+            else:
+                self.onManualRun(e)
+
         event.EventObject.Navigate()
         event.Skip()
     def OnRunScript(self,e):
@@ -302,7 +322,7 @@ class MyFrame(wx.Frame):
         self.MainInput.SetValue('')
         if  argv.strip()=='':
             self.bIARunning=False
-            self.buttons[3].SetName('ManualRun')
+            #self.buttons[3].SetName('ManualRun')
             return
 
         argv=argv.split(' ')
@@ -331,7 +351,7 @@ class MyFrame(wx.Frame):
         print('CWD:',os.getcwd())
         from IAshell import IAshell
         tmp =sys.stdout
-        sys.stdout = self.MainOutput
+
         self.bIARunning =True
         self.ia =IAshell('TC',bench, sutnames,manuallogdir, outputfile=self.MainOutput )
 
@@ -339,7 +359,7 @@ class MyFrame(wx.Frame):
         print('#'*80)
 
         try:
-            while self.bIARunning:
+            while self.ia.tc.IsAlive():
                 try:
                     self.Show()
                     time.sleep(.1)
@@ -349,6 +369,7 @@ class MyFrame(wx.Frame):
                     self.info(msg)
         except:
             pass
+        self.bIARunning =False
         sys.stdout =tmp
 
 app = wx.App(False)

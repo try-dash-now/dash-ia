@@ -4,12 +4,15 @@ import os
 import sys
 
 pardir =os.path.dirname(os.path.realpath(os.getcwd()))
-pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
-sys.path.append(os.path.sep.join([pardir,'lib']))
+libpath = os.path.sep.join([pardir,'lib'])
+if libpath not in sys.path:
+    sys.path.insert(0,libpath)
+
+from common import csvfile2dict
 if __name__ == "__main__":
     returncode = 0
     try:
-        from common import csvfile2dict
+
         runcfgfile = os.path.abspath('./run.cfg')
         runcfg = csvfile2dict(runcfgfile)
         dbname =runcfg.get('db')

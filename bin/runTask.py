@@ -3,7 +3,9 @@
 __author__ = 'Sean Yu'
 import os,sys
 pardir =os.path.dirname(os.path.realpath(os.getcwd()))
-sys.path.append(os.path.sep.join([pardir,'lib']))
+libpath = os.path.sep.join([pardir,'lib'])
+if libpath not in sys.path:
+    sys.path.insert(0,libpath)
 from common import csvfile2array
 import re as sre
 import os

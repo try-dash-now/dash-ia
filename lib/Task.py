@@ -382,8 +382,10 @@ class Task(object):
             print('-'*80)
             report =self.GenerateHtmlReport()
             htmlfile = "%s_%s_%s.html"%(self.ArgStr, self.CaseRangeStr, self.TaskStartTime)
-            htmlfile=htmlfile.replace('-', '_').replace(',', '_').replace('/', '_')
-            with open("%s/%s_%s"%( self.RunCfg['report'],os.path.basename(self.SuiteFile),htmlfile), 'wb') as f:
+            htmlfile=htmlfile.replace('-', '_').replace(',', '_').replace('/', '_').replace('"','').replace("'",'')
+            reportfilename = "%s/%s_%s"%( self.RunCfg['report'],os.path.basename(self.SuiteFile),htmlfile)
+
+            with open(reportfilename, 'wb') as f:
                 f.write(report.encode(encoding='utf_8', errors='strict'))
         except Exception as e:
             print("Task::DumpReport() error: "+str(e))
