@@ -128,7 +128,7 @@ class HttpHandler(BaseHTTPRequestHandler):
             indexpage= open(home+'dash.ico', 'r')
             encoded=indexpage.read()
             type =  "application/x-ico"
-        elif self.path.startswith('/log'):
+        elif self.path.startswith('/log') or self.path.startswith('/report'):
             path = os.path.abspath(root)
             path = '/'.join([path, self.path])
             if  os.path.isfile(path):
@@ -142,6 +142,7 @@ class HttpHandler(BaseHTTPRequestHandler):
                 encoded =self.list_dir(path, self.path)
 
             #encoded = encoded.encode(encoding='utf_8')
+
         else:
             path = os.path.abspath(root)
             path = '/'.join([path, self.path])
