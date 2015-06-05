@@ -32,8 +32,9 @@ class MyFrame(wx.Frame):
         # In this case, we select 200px width and the default height.
         wx.Frame.__init__(self, parent, title=title, size=(200,-1))
         self.MainOutput = wx.TextCtrl(self, style=wx.TE_MULTILINE|wx.TE_READONLY)
-        self.MainOutput.SetValue('output')
+        self.MainOutput.SetValue('Read Only Output')
         self.MainInput = wx.TextCtrl(self)
+        self.MainInput.SetValue('Start test here: bench SUT_Name1 SUT_Name2 ...')
         self.icon = wx.Icon('../lib/html/dash.ico', wx.BITMAP_TYPE_ICO)
         self.SetIcon(self.icon)
         self.CreateStatusBar() # A Statusbar in the bottom of the window
