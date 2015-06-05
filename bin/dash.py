@@ -107,6 +107,7 @@ class MyFrame(wx.Frame):
         dlg.ShowModal() # Shows it
         dlg.Destroy() # finally destroy it when finished.
     def OnClose(self,e): #fix: RuntimeError: maximum recursion depth exceeded while calling a Python object
+        self.Hide()
         if self.bIARunning or self.IAThread:
             self.bIARunning=False
             self.ia.do_Exit()
