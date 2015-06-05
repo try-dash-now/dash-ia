@@ -168,11 +168,15 @@ class MyFrame(wx.Frame):
             self.info('try to run executable file')
             exe_cmd= os.getcwd()+ '/runWebServer.exe'
             self.info(exe_cmd)
-            pp = subprocess.Popen(args = exe_cmd,shell =False, stdout=self.weblogfile,creationflags=0x08000000)
+            if os.name=='nt':
+                pp = subprocess.Popen(args = exe_cmd,shell =True, stdout=self.weblogfile,creationflags=0x08000000)
+            else:
+                pp = subprocess.Popen(args = exe_cmd,shell =True, stdout=self.weblogfile)
 
         MaxCounter = 2
         first =True
         self.webserver = pp
+        self.MainOutput.AppendText('web server process Id:%d\n'%pp.pid)
         respone = 'launched http server on port 8080!'
         while MaxCounter:
             MaxCounter-=1
@@ -185,6 +189,7 @@ class MyFrame(wx.Frame):
                 time.sleep(interval)
             else:
                 #return pp.returncode:
+                os.kill(self.webserver.pid,signal.SIGTERM)
                 self.webserver=None
                 MaxCounter = 0
                 respone ='Failed to launch http server on port 8080!'

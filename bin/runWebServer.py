@@ -10,6 +10,7 @@ if libpath not in sys.path:
 from HttpServer import  ThreadingHttpServer, HttpHandler
 port =8080
 httpd=ThreadingHttpServer(('',port), HttpHandler)
+
 from socket import *
 
 
@@ -30,6 +31,7 @@ except Exception as e:
 hostname =gethostname()
 
 print("Server started on %s (%s),port %d....."%(hostname,hostip,port))
+#print('Process ID:%d'%os.geteuid())
 httpd.serve_forever()
 
 try:
