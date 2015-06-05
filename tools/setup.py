@@ -26,9 +26,12 @@ dist = setup(
     data_files= ['../bin/manualrun.cfg',
                    '../bin/run.cfg',
                    ( 'bench',['../bench/local']),
+
                    ('case', []),
+                   ('case', ['../case/case1.csv']),
                    ( 'case/manual', []),
                    ('suite', []),
+                   ('suite', ['../suite/suite1.csv']),
                    ('report', []),
                    ('database',[]),
                    ('log',[]),
