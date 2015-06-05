@@ -120,6 +120,7 @@ class MyFrame(wx.Frame):
         self.Destroy()
         #self.Close(True)  # Close the frame.
     def OnExit(self,e):
+        self.Hide()
         if self.bIARunning or self.IAThread:
             self.bIARunning=False
             self.ia.do_Exit()
