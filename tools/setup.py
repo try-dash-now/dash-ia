@@ -25,6 +25,7 @@ dist = setup(
     windows = ['../bin/dash.py'],
     data_files= ['../bin/manualrun.cfg',
                    '../bin/run.cfg',
+                   '../LICENSE.TXT',
                    ( 'bench',['../bench/local']),
 
                    ('case', []),
@@ -80,10 +81,13 @@ for file in os.listdir(folder):
     sourceFile = os.path.join(folder,  file)
     targetFile = os.path.join(targetDir,  file)
     #cover the files
-
+    if os.path.basename(sourceFile)=='LICENSE.TXT':
+        continue
     if os.path.isfile(sourceFile):
         open(targetFile, "wb").write(open(sourceFile, "rb").read())
         os.remove(sourceFile)
+
+
 
 
 
