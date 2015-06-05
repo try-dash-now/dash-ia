@@ -32,7 +32,11 @@ class MyFrame(wx.Frame):
         # In this case, we select 200px width and the default height.
         wx.Frame.__init__(self, parent, title=title, size=(200,-1))
         self.MainOutput = wx.TextCtrl(self, style=wx.TE_MULTILINE|wx.TE_READONLY)
-        self.MainOutput.SetValue('Read Only Output')
+        self.MainOutput.SetValue('''Read Only Output.
+                               launch HTTP server on port 8080: menu 'File'->'Launch HTTP server'
+                               run a single case: http://localhost:8080/case
+                               run a test suite: http://localhost:8080/suite
+                               Recard and Replay: 'bench SUT_Name1 SUT_Name2 ... in edit box below, example: local l''')
         self.MainInput = wx.TextCtrl(self)
         self.MainInput.SetValue('Start test here: bench SUT_Name1 SUT_Name2 ...')
         self.icon = wx.Icon('../lib/html/dash.ico', wx.BITMAP_TYPE_ICO)
