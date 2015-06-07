@@ -72,6 +72,8 @@ class HttpHandler(BaseHTTPRequestHandler):
             {
                 if (xmlhttp.readyState==4 && xmlhttp.status==200)
                 {
+                    alert(xmlhttp.responseText);
+                    newHTML( xmlhttp.responseText);
                     setTimeout("window.close()",3000);
                 }
             }
@@ -79,7 +81,14 @@ class HttpHandler(BaseHTTPRequestHandler):
             xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
             xmlhttp.send( params );
         }
-
+    function newHTML(HTMLstring) {
+        //var checkitem = mygetCheckedItem();
+        //HTMLstring=post( 'manualtest','/cgi-bin/onSUTLIST.py', 'bedname='+encodeURI(checkitem) );
+        var newwindow=window.open();
+        var newdocument=newwindow.document;
+        newdocument.write(HTMLstring);
+        newdocument.close();
+    }
         </SCRIPT>
         '''
         for name in list:
