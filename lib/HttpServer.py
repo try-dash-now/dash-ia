@@ -52,11 +52,11 @@ class HttpHandler(BaseHTTPRequestHandler):
         content+="<hr>\n<ul>\n"
         content+='''
         <SCRIPT>
-    function post( id, dest )
+    function post( id, script, dest )
         {
             element = document.getElementById(id);
             value = element.value
-            params = 'script='+encodeURI(id)+'&arg='+encodeURI(value)
+            params = 'script='+encodeURI(script)+'&arg='+encodeURI(value)
             var xmlhttp;
 
             if (window.XMLHttpRequest)
@@ -94,15 +94,18 @@ class HttpHandler(BaseHTTPRequestHandler):
                 # Note: a link to a directory displays with @ and links with /
             input_button =""
             filename = urllib.quote(linkname)
+            if not related_path.endswith('/'):
+                related_path+='/'
+            fullfilename =related_path+urllib.quote(linkname)
             if related_path.startswith('/case') and os.path.isfile(fullname):
                 input_button = """
                 <input id=%s name="ARGS" style="width:200"  type="text" value="" rows="1"   autocomplete="on">
-                <input name="go" value="Run" type="button" onClick="post('%s', 'RunCase')";>"""%(filename,filename)
+                <input name="go" value="Run" type="button" onClick="post('%s','%s', 'RunCase')";>"""%(filename,filename,fullfilename)
             elif related_path.startswith('/suite') and os.path.isfile(fullname):
                 input_button = """
                 <input id=%s name="ARGS" style="width:200"  type="text" value="" rows="1"   autocomplete="on">
-                <input name="go" value="Run" type="button" onClick="post('%s', 'RunSuite')";>"""%(filename,filename)
-            content+='<li><a href="%s">%s</a>\n'% ('/'.join([related_path, urllib.quote(linkname)]), cgi.escape(displayname))+input_button
+                <input name="go" value="Run" type="button" onClick="post('%s','%s', 'RunSuite')";>"""%(filename,filename,fullfilename)
+            content+='<li><a href="%s">%s</a>\n'% (related_path+urllib.quote(linkname), cgi.escape(displayname))+input_button
         content+="</ul>\n<hr>\n</body>\n</html>\n"
 
         return content
@@ -130,7 +133,7 @@ class HttpHandler(BaseHTTPRequestHandler):
             type =  "application/x-ico"
         elif self.path.startswith('/log') or self.path.startswith('/report'):
             path = os.path.abspath(root)
-            path = '/'.join([path, self.path])
+            path = path+ self.path.replace('//','/')
             if  os.path.isfile(path):
                 indexpage= open(path)
                 encoded=indexpage.read()
@@ -145,7 +148,7 @@ class HttpHandler(BaseHTTPRequestHandler):
 
         else:
             path = os.path.abspath(root)
-            path = '/'.join([path, self.path])
+            path = path+ self.path.replace('//','/')
             if  os.path.isfile(path):
                 from common import csvfile2array
                 arrary = csvfile2array(path)
@@ -286,19 +289,20 @@ class HttpHandler(BaseHTTPRequestHandler):
             req = urlparse.parse_qs(urlparse.unquote(s))
             script = req['script'][0]
             arg = req['arg'][0]
-            if self.path =='/RunCase':
+
+            if self.path.endswith('/RunCase'):
                 executefile = 't.py'
                 print(os.getcwd())
                 if os.path.exists('t.exe') and not os.path.exists(executefile):
                     executefile='t.exe'
 
-            elif self.path=='/RunSuite':
+            elif self.path.endswith('/RunSuite'):
                 print(os.getcwd())
                 executefile = 'runTask.py'
                 print(os.getcwd())
                 if os.path.exists('runTask.exe') and not os.path.exists(executefile):
                     executefile='runTask.exe'
-
+            script ='..'+script
             encoded=self.RunScript(executefile, [script, arg])
 
             print('result of '+ executefile+ ' ' + arg+ ' '+str(encoded))
