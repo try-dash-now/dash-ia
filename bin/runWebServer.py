@@ -8,7 +8,7 @@ if libpath not in sys.path:
 
 
 from HttpServer import  ThreadingHttpServer, HttpHandler
-port =8081
+port =8080
 httpd=ThreadingHttpServer(('',port), HttpHandler)
 
 from socket import *
