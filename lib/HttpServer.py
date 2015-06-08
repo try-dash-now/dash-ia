@@ -325,7 +325,6 @@ class HttpHandler(BaseHTTPRequestHandler):
             response = self.ParseFormData(s)
             if response:
                 type, filename, data =response
-
                 encoded = self.onUploadFile(type, filename, data)
             else:
                 encoded ='ERROR: %s, Can\'t parse Form data: %s'%(str(e),s)

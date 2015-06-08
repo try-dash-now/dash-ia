@@ -43,6 +43,7 @@ class Task(object):
     CaseRangeStr= ''
     ArgStr= ''
     Report=[['index', 'case','TCP port', 'logdir', 'pid', 'start time', 'end time','duration','result']]
+    htmllogdir = None
     def __init__(self, config=None):
         if not config:
             config ='./manualrun.cfg'
@@ -180,14 +181,17 @@ class Task(object):
     def Run(self, server=None):
         '''start to run cases in pole'''
         subdirname = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+
         dirname = os.path.basename(self.SuiteFile)
-        dirname = "%s%s%s"%(self.RunCfg['logdir'], os.path.sep,  dirname.replace(',', '_').replace('-', '_'))
+        dirname = "%s%s%s"%(self.RunCfg['logdir'],os.path.sep, dirname.replace(',', '_').replace('-', '_'))
         subdirname= "%s%s%s"%(dirname,os.path.sep, subdirname.replace(',', '_').replace('-', '_'))
+        self.htmllogdir = '/%s'%(subdirname)
         dirname = os.path.abspath(dirname)
         if not os.path.exists(dirname):
             os.mkdir(dirname)
         if not os.path.exists(subdirname):
             os.mkdir(subdirname)
+
         #index = 0
 
         self.PASS=0
@@ -265,9 +269,10 @@ class Task(object):
 # varchar(32)
 #===============================================================================
 
-            casedir = os.path.sep.join([subdirname,'%d'%(self.index+1)])
+            casedir = subdirname+'/%d'%(self.index+1)
             doublesep= '%s%s'%(os.path.sep,os.path.sep)
-            casedir.replace(doublesep, os.path.sep)
+            casedir = casedir.replace(doublesep, os.path.sep)
+            casedir= os.path.abspath(casedir)
             if not os.path.exists(casedir):
                 os.mkdir(casedir)
             self.Current.update({'4-logdir':casedir})
@@ -443,9 +448,9 @@ class Task(object):
             bgcolor="#00FF00"
             if result[8]=='fail':
                 bgcolor = "#FF0000"
-
+            htmllogdir = self.htmllogdir+'/%d'%result[0]
             response = response +"""<tr><td>%d</td><td bgcolor="%s"><a target="+BLANK" href="%s">%s</td><td><a target="+BLANK" href="%s">%s</td><td>%s</td></tr>
-"""%(result[0],bgcolor,result[3][1:],result[8],result[3][1:],result[1][0],result[7])
+"""%(result[0],bgcolor,htmllogdir,result[8],htmllogdir,result[1][0],result[7])
 
 
 
