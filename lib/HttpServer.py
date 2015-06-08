@@ -211,7 +211,11 @@ class HttpHandler(BaseHTTPRequestHandler):
                          stdout=pipe_output,
                          shell=True
                          )
-            print('PID: %d runcase(%s) has been launched, stdin(%s), stdout(%s)'%(pp.pid,exe_cmd,file_name_in,file_name_out))
+            encoded ='PID: %d runcase(%s) has been launched, stdin(%s), stdout(%s)'%(pp.pid,exe_cmd,file_name_in,file_name_out)
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")#; charset=%s" % enc)
+            self.end_headers()
+            self.wfile.write(encoded)
 
             import time
             ChildRuning = True
@@ -312,6 +316,7 @@ class HttpHandler(BaseHTTPRequestHandler):
                 if os.path.exists('runTask.exe') and not os.path.exists(executefile):
                     executefile='runTask.exe'
             script ='..'+script
+
             encoded=self.RunScript(executefile, [script, arg])
 
             print('result of '+ executefile+ ' ' + arg+ ' '+str(encoded))
@@ -341,10 +346,10 @@ class HttpHandler(BaseHTTPRequestHandler):
                 encoded ='can\'t run script!'
                 encoded = encoded.encode(encoding='utf_8', errors='strict')
 
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")#; charset=%s" % enc)
-        self.end_headers()
-        self.wfile.write(encoded)
+        # self.send_response(200)
+        # self.send_header("Content-type", "text/html")#; charset=%s" % enc)
+        # self.end_headers()
+        # self.wfile.write(encoded)
 
 
 
