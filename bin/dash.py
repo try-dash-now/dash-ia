@@ -116,11 +116,11 @@ class MyFrame(wx.Frame):
         if self.bIARunning or self.IAThread:
             self.bIARunning=False
             self.ia.do_Exit()
-        if self.webserver:
-            try:
-                os.kill(self.webserver.pid, signal.SIGTERM)
-            except:
-                pass
+
+        try:
+            os.kill(self.webserver.pid, signal.SIGTERM)
+        except:
+            pass
 
         self.Destroy()
         #self.Close(True)  # Close the frame.

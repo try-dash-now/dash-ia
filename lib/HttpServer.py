@@ -194,10 +194,10 @@ class HttpHandler(BaseHTTPRequestHandler):
 
     def RunScript(self, script, args=None):
             if not args:
-                args =[]
+                args =''
 
 
-            exe_cmd = '%s %s'%(script, ' '.join(args))
+            exe_cmd = '%s %s'%(script,args)
             print('Run Script:'+exe_cmd)
             if script.find('.py') != -1:
                 exe_cmd = 'python '+exe_cmd
@@ -316,8 +316,8 @@ class HttpHandler(BaseHTTPRequestHandler):
                 if os.path.exists('runTask.exe') and not os.path.exists(executefile):
                     executefile='runTask.exe'
             script ='..'+script
-
-            encoded=self.RunScript(executefile, [script, arg])
+            args = script+ ' '+ arg
+            encoded=self.RunScript(executefile, args)
 
             print('result of '+ executefile+ ' ' + arg+ ' '+str(encoded))
 

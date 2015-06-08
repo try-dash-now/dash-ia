@@ -42,7 +42,7 @@ class Task(object):
     CaseRange=None
     CaseRangeStr= ''
     ArgStr= ''
-    Report=[['index', 'case','TCP port', 'logdir', 'pid', 'start time', 'end time','duration','result']]
+    Report=[['index', 'case','TCP port', 'logdir', 'pid', 'start time', 'end time','duration','result' , 'execute cmd']]
     htmllogdir = None
     def __init__(self, config=None):
         if not config:
@@ -57,7 +57,8 @@ class Task(object):
             caserange='ALL'
         if args==None:
             args=''
-        self.ArgStr=args
+        self.ArgStr=args.encode()
+        print('ArgStr:' ,self.ArgStr)
         import os
         if str(SuiteFile).find(os.path.sep)!=-1:
             self.SuiteFile = SuiteFile
@@ -67,7 +68,11 @@ class Task(object):
         with open(self.SuiteFile) as f:#, newline=''
             suitestring = f.read()
             index = 0
-            temp = args.split(',')[1:]
+
+            #temp = args.split(',')[1:]
+            import shlex
+            temp = shlex.split(args)
+
             print(temp)
             for arg in temp:
                 suitestring= suitestring.replace("${%d}"%(index+1), arg)
@@ -129,7 +134,7 @@ class Task(object):
         else:
             DebugWhenFailed= 'False'
 
-        if cmd.find('t.py') !=-1 :  #cmd.startswith('r.py ') or
+        if cmd.startswith('t.py') :  #cmd.startswith('r.py ') or
             executefile = 't.py'
             print(os.getcwd())
             if os.path.exists('t.exe') and not os.path.exists(executefile):
@@ -138,11 +143,14 @@ class Task(object):
                 cmd = cmd.replace('t.py', 't.exe')
             exe_cmd =exe_cmd+ cmd+" -l "+logdir
             pp = subprocess.Popen(args = exe_cmd ,shell =True, stdin=pipe_input)
+        elif cmd.find('gtest.py')!=-1:
+            exe_cmd =exe_cmd+ cmd+" -l "+logdir
+            pp = subprocess.Popen(args = exe_cmd ,shell =True, stdin=pipe_input)
         else:
             exe_cmd = exe_cmd+ cmd+" %d %s "%(tcpport, DebugWhenFailed)+logdir
             pp = subprocess.Popen(args = exe_cmd,shell =True, stdin=pipe_input)
         #InsertRecord(dbname, caseinfo, """%f, 0.0, %d,  '%s', 'started'"""%(sst, pp.pid,  exe_cmd ))
-
+        self.Report[self.Report.__len__()-1][9]=exe_cmd
         self.Current.update({'5-pid':pp.pid, '6-starttime': starttime})
         self.Report[self.Report.__len__()-1][4]=pp.pid
         self.Report[self.Report.__len__()-1][5]=starttime
@@ -197,8 +205,8 @@ class Task(object):
         self.PASS=0
         self.FAIL=0
         self.SKIP =0
-        self.Report
-        self.Report=[['index', 'case','TCP port', 'logdir', 'pid', 'start time', 'end time','duration','result']]
+
+        self.Report=[['index', 'case','TCP port', 'logdir', 'pid', 'start time', 'end time','duration','result', 'Executed Cmd']]
         while self.index <len(self.CaseList):
             self.Current.update({
                      '1-index':-1,
@@ -214,7 +222,7 @@ class Task(object):
 
 
             if self.InRange(self.index):
-                self.Report.append([self.index+1, '', -1, '','0',0.0,0.0,'-',''])
+                self.Report.append([self.index+1, '', -1, '','0',0.0,0.0,'-','', ''])
                 pass
             elif len(self.CaseList)<self.index:
                 self.index= self.index+1
@@ -387,7 +395,7 @@ class Task(object):
             print('-'*80)
             report =self.GenerateHtmlReport()
             htmlfile = "%s_%s_%s.html"%(self.ArgStr, self.CaseRangeStr, self.TaskStartTime)
-            htmlfile=htmlfile.replace('-', '_').replace(',', '_').replace('/', '_').replace('"','').replace("'",'')
+            htmlfile=htmlfile.replace('-', '_').replace(',', '_').replace('/', '_').replace('"','').replace("'",'').replace(' ','')
             reportfilename = "%s/%s_%s"%( self.RunCfg['report'],os.path.basename(self.SuiteFile),htmlfile)
 
             with open(reportfilename, 'wb') as f:

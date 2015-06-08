@@ -23,18 +23,19 @@ if __name__=='__main__':
 
     suitefile=sys.argv[1]
     caserange=sys.argv[2]
-    args =sys.argv[3]
+    args =sys.argv[3:]
     print('suitefile:', suitefile)
     print('caserange:', caserange)
     print('args:', args)
     try:
-        args = ','.join(sys.argv[2:])
+        args = ' '.join(sys.argv[3:])
     except:
         pass
     #tcpport=50009
     #svr = CServer('localhost', tcpport,'Task', 'Task',{}, 'IsAlive')  
     #t = svr.Handler
     t = Task()
+    args = ' '.join(args)
     t.LoadFile(suitefile, caserange, args)
     print('start..............')
     #t.Load(suitfile)#'CaseListFile'
