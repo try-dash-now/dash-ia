@@ -60,7 +60,7 @@ class Task(object):
         self.ArgStr=args.encode()
         print('ArgStr:' ,self.ArgStr)
         import os
-        if str(SuiteFile).find(os.path.sep)!=-1:
+        if str(SuiteFile).find('\\')!=-1 or str(SuiteFile).find('/')!=-1:
             self.SuiteFile = SuiteFile
         else:
             self.SuiteFile = self.RunCfg['suitedir']+os.path.sep+SuiteFile
@@ -395,7 +395,7 @@ class Task(object):
             print('-'*80)
             report =self.GenerateHtmlReport()
             htmlfile = "%s_%s_%s.html"%(self.ArgStr, self.CaseRangeStr, self.TaskStartTime)
-            htmlfile=htmlfile.replace('-', '_').replace(',', '_').replace('/', '_').replace('"','').replace("'",'').replace(' ','')
+            htmlfile=htmlfile.replace('-', '_').replace(',', '_').replace('/', '_').replace('"','').replace("'",'').replace(' ','_')
             reportfilename = "%s/%s_%s"%( self.RunCfg['report'],os.path.basename(self.SuiteFile),htmlfile)
 
             with open(reportfilename, 'wb') as f:
@@ -444,7 +444,7 @@ class Task(object):
 <BR>
 <BR>
 <table cellspacing="1" cellpadding="2" border="1">
-"""%(self.SuiteFile, self.ArgStr, self.CaseRangeStr ,TOTAL, CASEPASS, CASEFAIL, CASENOTRUN, PPASS,PFAIL,PNOTRUN)
+"""%(self.SuiteFile.replace('../suite/',''), self.ArgStr, self.CaseRangeStr ,TOTAL, CASEPASS, CASEFAIL, CASENOTRUN, PPASS,PFAIL,PNOTRUN)
 
         response = response+ '''<tr><td>No.</td><td>Result</td><td>Case Name</td><td>Duration(s)</td></tr>'''
         if len(self.Report)<2:

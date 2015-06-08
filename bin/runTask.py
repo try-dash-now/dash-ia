@@ -19,8 +19,16 @@ sreAbort = sre.compile("^\s*abort\s*", sre.I)
 from Task import Task
 
 
-if __name__=='__main__': 
-
+if __name__=='__main__':
+    suitefile=sys.argv[1]
+    caserange='ALL'
+    args =[]
+    len = len(sys.argv)
+    if len >2:
+        caserange=sys.argv[2]
+        args =sys.argv[3:]
+    elif len ==2:
+        caserange=sys.argv[2]
     suitefile=sys.argv[1]
     caserange=sys.argv[2]
     args =sys.argv[3:]
@@ -35,7 +43,7 @@ if __name__=='__main__':
     #svr = CServer('localhost', tcpport,'Task', 'Task',{}, 'IsAlive')  
     #t = svr.Handler
     t = Task()
-    args = ' '.join(args)
+    #args = ' '.join(args)
     t.LoadFile(suitefile, caserange, args)
     print('start..............')
     #t.Load(suitfile)#'CaseListFile'
