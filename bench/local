@@ -1,4 +1,4 @@
-2960,TIMEOUT=10,"LOGIN=test,assword:,10\n123,~],20",CMD=telnet 192.168.1.112,SUT=,EXP=login:,LINEEND=u''+char(13)
-3750,TIMEOUT=10,"LOGIN=test,assword:,10\n123,~],20",CMD=telnet localhost,SUT=,EXP=login:,LINEEND=u''+char(13)
+DUT1,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,
+DUT2,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,
 l,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,
-cmd2,abc
+

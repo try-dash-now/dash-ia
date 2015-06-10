@@ -350,7 +350,7 @@ class Case(object):
     def ActionCheck(self,step=[]):
         global reRetry,reNo,reNoWait,reNoAction,reCtrl,reAlt,reCtrlAlt
         #for step in steps:
-        self.info('Start Step:sut(%s), action(%s), expect(%s) within %d'%(step[0],step[1],step[2],int(step[3])))
+        self.info('Start Step:sut(%s), action(%s), expect(%s) within %f'%(step[0],step[1],step[2],float(step[3])))
         [sut,cmd,exp,Time]=step[:4]
         [fretry,fNoAction,fNo,fNoWait]=[1,False,False,False]
         mRetry=re.match(reRetry, cmd)
@@ -430,8 +430,8 @@ class Case(object):
             if fNo:
                 try:
                     s.Expect(exp,Time,fNoWait)
-                    self.error('unexpect(%s) found within %d'% (exp, int(time)))
-                    raise Exception('unexpect(%s) found within %d'% (exp, int(time)))
+                    self.error('unexpect(%s) found within %f'% (exp, float(time)))
+                    raise Exception('unexpect(%s) found within %f'% (exp, float(time)))
                 except Exception as e:
                     self.info('no unexpected pattern (%s) found'%exp)
             else:
@@ -609,11 +609,11 @@ class Case(object):
                     self.fRunning=True
                     print('#'*80)
                     print('#step (%s.%d)'%(seg[self.cp[0]],int(self.cp[1])))
-                    print('#SUT(%s), Action(%s), Exp(%s), Within (%d)'%(step[0],step[1],step[2],int(step[3])))
+                    print('#SUT(%s), Action(%s), Exp(%s), Within (%f)'%(step[0],step[1],step[2],float(step[3])))
 
                     self.info('#'*80)
                     self.info('#step (%s.%d)'%(seg[self.cp[0]],int(self.cp[1])))
-                    self.info('#SUT(%s), Action(%s), Exp(%s), Within (%d)'%(step[0],step[1],step[2],int(step[3])))
+                    self.info('#SUT(%s), Action(%s), Exp(%s), Within (%f)'%(step[0],step[1],step[2],float(step[3])))
                     if len(step)>4:
                         print('#%s'%(step[4]))
                         self.info('#%s'%(step[4]))

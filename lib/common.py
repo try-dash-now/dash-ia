@@ -214,7 +214,7 @@ class CCSV2Case(object):
             if len(str(r[3]))==0:
                 r[3]=300
             try:
-                r[3]= int(r[3])
+                r[3]= float(r[3])
             except: 
                 r[3] = 300
         return r
