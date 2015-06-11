@@ -25,42 +25,44 @@ if os.name!='nt':
 else:
     import Queue as queue
 class Case(object):
-    LogDir= './'
-    Name= 'DefaultTestCaseName'
-    SUTs={}
-    Session={}
-    Steps=[[],[],[]]
+    LogDir=None# './'
+    Name=None# 'DefaultTestCaseName'
+    SUTs=None#{}
+    Session=None #{}
+    Steps=None#[[],[],[]]
     logger=None
     
-    arg =[]
-    kwarg = {}  
-    argvs=[]
-    kwargvs =[]
+    arg =None#[]
+    kwarg = None#{}
+    argvs=None#[]
+    kwargvs =None#[]
     thInteraction =None
     bCaseEnd=False
     MoniterInterval =1 #second
     ServerPort=50000
-    ServerHost ='localhost'
+    ServerHost =None#'localhost'
     #CasePort=50001
     #CaseHost ='localhost'
-    SocketResponse=''
+    SocketResponse=None#''
     Sock=None
-    Mode= 'FULL'
-    breakpoint=[[],[],[]]
+    Mode= None#'FULL'
+    breakpoint=None#[[],[],[]]
     flagInteraction=False
-    cp=[0,1]
+    cp=None#[0,1]
     thWebclient =None
     CaseFailed= True
     DebugWhenFailed=False
     qCommand=queue.Queue()
     fRunning= False
-    RecordReplay=[]
-    IndexOfSutOutput ={'client':{'tel':[0,0]}}
-    SUTNAME =[]
+    RecordReplay=None#[]
+    IndexOfSutOutput =None
+    SUTNAME =None#[]
     InitialDone=False
     fActionInProgress=False
     lockOutput = None
     lockRR =None
+
+
     def SaveCase2File(self):
         import csv
         MAX_LENGTH_OF_CELL =256
@@ -224,6 +226,25 @@ class Case(object):
         self.UpdateSutOutput2RecordReplay('__case__', msg)
         
     def __init__(self,name,suts,steps=None,mode=None,DebugWhenFailed=False,logdir=None,caseconfigfile=None):
+        self.Name= 'DefaultTestCaseName'
+        self.SUTs={}
+        self.Session={}
+        self.Steps=[[],[],[]]
+        self.arg =[]
+        self.kwarg = {}
+        self.argvs=[]
+        self.kwargvs =[]
+        self.ServerHost ='localhost'
+        self.SocketResponse=''
+        self.Mode= 'FULL'
+        self.breakpoint=[[],[],[]]
+        self.cp=[0,1]
+        self.qCommand=queue.Queue()
+        self.RecordReplay=[]
+        self.IndexOfSutOutput= {'client':{'tel':[0,0]}}
+        self.SUTNAME =[]
+
+
         if not steps :
             steps = [[],[],[]]
         if not mode:
@@ -274,6 +295,20 @@ class Case(object):
         self.hdrlog .setFormatter(logging.Formatter('%(asctime)s -%(levelname)s: %(message)s'))
         self.logger.addHandler(self.hdrlog )
         sutstring =''
+
+
+        #self.LogDir='./'
+
+
+
+
+
+
+
+
+
+
+
         for sut in self.SUTs.keys():
             sutstring +='SUT(%s):[%s]\n'%(sut,self.SUTs[sut])
             self.Session.update({sut:self.Connect2Sut(sut)})
@@ -290,6 +325,7 @@ class Case(object):
         self.RecordReplay.append(newrecord)
         self.RecordReplay.append(before1staction)
         self.InitialDone=True
+
         #print(self.thInteraction)
     def troubleshooting(self):
         import threading
@@ -316,13 +352,14 @@ class Case(object):
             return 'case failed! and it is waiting for your debug, if you do want to end this case, please try EndCase(force=True)'
         elif self.flagInteraction==True and force==False:
             return 'case is in troubleshooting/interaction mode, if you do want to end this case, please try EndCase(force=True)'
-
+        savefile =threading.Thread(target=self.SaveCase2File,args =[])
+        savefile.start()
         self.bCaseEnd=True
         import time
         import os
-        if self.thInteraction and self.thInteraction.isAlive():
-            time.sleep(1)
-        time.sleep(self.MoniterInterval)
+        #if self.thInteraction and self.thInteraction.isAlive():
+        #    time.sleep(1)
+        #time.sleep(self.MoniterInterval)
         for sut in self.Session.keys():            
             self.Session[sut].EndSession()
 
@@ -336,7 +373,8 @@ class Case(object):
         pid = os.getpid()
         #UpdateRecord(dbname, caseinfo, """status='ended-closed',end_time=%f"""%(time.time()), "status='running' and pid= %d"%(pid))
         #self.logger.info('update database done!')
-        self.SaveCase2File()
+
+        #self.SaveCase2File()
         #if self.Sock:
             #self.Sock.shutdown(socket.SHUT_RDWR)
             #self.Sock.close()

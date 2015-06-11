@@ -191,7 +191,7 @@ class IAshell(Cmd, object):
             self.prompt= '%s(%s)>>>'%(os.linesep, self.sutname)
             return 'current SUT: %s'%(self.sutname)
         else:
-            return 'sutsut(\'%s\') is not defined'%self.sutname
+            return 'sutsut(\'%s\') is not defined'%sutname
     def postcmd(self,stop, line):
         if stop!=None and len(str(stop))!=0:
             self.InteractionOutput+='\n'+self.prompt+str(stop)+self.prompt

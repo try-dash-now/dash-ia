@@ -246,24 +246,30 @@ class MyFrame(wx.Frame):
         """"""
         event =e
         keycode = e.GetKeyCode()
-        if keycode in [ wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_TAB]:
+        try:
+            if keycode in [ wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_TAB]:
 
-            if self.bIARunning and self.ia.tc.IsAlive():
-                line = str(self.MainInput.GetValue())
-                if keycode ==wx.WXK_TAB:
-                    line = line+'\t'
-                line = self.ia.precmd(line)
-                line = self.ia.precmd(line)
-                stop = self.ia.onecmd(line)
-                stop = self.ia.postcmd(stop, line)
-                self.ia.postloop()
+                if self.bIARunning and self.ia.tc.IsAlive():
+                    line = str(self.MainInput.GetValue())
+                    if keycode ==wx.WXK_TAB:
+                        line = line+'\t'
+                    line = self.ia.precmd(line)
+                    line = self.ia.precmd(line)
+                    stop = self.ia.onecmd(line)
+                    stop = self.ia.postcmd(stop, line)
+                    self.ia.postloop()
+                    self.MainInput.SetValue('')
+                    self.Show()
+                else:
+                    self.onManualRun(e)
+        except :
                 self.MainInput.SetValue('')
                 self.Show()
-            else:
-                self.onManualRun(e)
+
 
         event.EventObject.Navigate()
         event.Skip()
+
     def OnRunScript(self,e):
         line = str(self.MainInput.GetValue())
 
@@ -365,23 +371,33 @@ class MyFrame(wx.Frame):
         tmp =sys.stdout
 
         self.bIARunning =True
-        self.ia =IAshell('TC',bench, sutnames,manuallogdir, outputfile=self.MainOutput )
-
-
-        print('#'*80)
-
         try:
-            while self.ia.tc.IsAlive():
-                try:
-                    self.Show()
-                    time.sleep(.1)
-                except Exception as e:
-                    msg = traceback.format_exc()
-                    self.info(msg)
-                    self.info(msg)
-        except:
-            pass
+            self.ia =IAshell('TC',bench, sutnames,manuallogdir, outputfile=self.MainOutput )
+
+
+            print('#'*80)
+
+            try:
+                while self.ia.tc.IsAlive():
+                    try:
+                        self.Show()
+                        time.sleep(.1)
+                    except Exception as e:
+                        msg = traceback.format_exc()
+                        self.info(msg)
+                        self.info(msg)
+            except:
+                pass
+            self.ia.InteractionRunning=False
+        except Exception as e:
+            import traceback
+            print(traceback.format_exc())
+            #print('can\'t run interaction test:%s'%(e) )
+
+
         self.bIARunning =False
+
+        self.ia=None
         sys.stdout =tmp
 
 app = wx.App(False)
