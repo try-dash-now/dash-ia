@@ -148,7 +148,7 @@ class WinSession(spawn, object):
         if msg.find('recv')!=-1:
             self.output+=args[0]
             self.seslog.write(args[0])
-
+            print(args[0])
         super(WinSession, self).msg(msg,*args)
 
     def GetFunArgs(self,*argvs, **kwargs):

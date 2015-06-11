@@ -7,7 +7,9 @@ pardir =os.path.dirname(os.path.realpath(os.getcwd()))
 libpath = os.path.sep.join([pardir,'lib'])
 if libpath not in sys.path:
     sys.path.insert(0,libpath)
-
+prodpath = os.path.sep.join([pardir,'product'])
+if prodpath not in sys.path:
+    sys.path.insert(0,prodpath)
 from common import csvfile2dict
 if __name__ == "__main__":
     returncode = 0
@@ -58,7 +60,9 @@ logdir--the log dir ,default is ../html/log/tmp''')
         mode= sys.argv[4]
         TroulbeshootingWhenCaseFailed = sys.argv[len(sys.argv)-2]
         logdir = sys.argv[len(sys.argv)-1]
-        name = '%s_%s_%s_%s'%(os.path.basename(bench),os.path.basename(feature),case,mode)
+        name = '%s_%s_%s'%(os.path.basename(bench),os.path.basename(feature),case)
+        import re
+        name =re.sub(r'[^\w\\/@+\-:,|#]+', '', name)
         for arg in sys.argv[5 :len(sys.argv)-1]:
             name='%s_%s'%(name,arg)
         from Case import Case
