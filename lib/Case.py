@@ -140,12 +140,14 @@ class Case(object):
             response = self.RecordReplay[index][colIndex][offset:]
             index +=1
             while cRecordIndex>=index:
-                response = response + self.RecordReplay[index][colIndex][:]
+                response = response + str(self.RecordReplay[index][colIndex])    #[:]
                 index +=1
             self.IndexOfSutOutput[client][sut]=self.GetCurrentSutOutputIndex(sut)
             time.sleep(0.2)
         except Exception as e:
-            print('#####'*160)
+            import traceback
+            print (traceback.format_exc())
+            #print('#####'*160)
             
             respone = DumpStack(e)
             self.error(response)

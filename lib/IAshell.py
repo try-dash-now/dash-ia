@@ -406,7 +406,7 @@ class IAshell(Cmd, object):
                     newcmd = [self.sutname, "%s(%s)"%(self.defaultfunction,args), '.*', 1.0, timeStr, interval, data, fun, real_vars]
 
                 self.cmdlist.append(newcmd)
-                self.tc.AddCmd2RecordReplay(newcmd)
+                self.tc.AddCmd2RecordReplay(newcmd[:4])
                 response =fun(*real_vars)
         if response!=None and len(str(response))!=0:
             self.InteractionOutput+=self.InteractionOutput+'\n'+self.prompt+str(response)+self.prompt

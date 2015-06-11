@@ -1,4 +1,4 @@
-DUT1,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,
-DUT2,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,
+dut1,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,
+dut2,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,
 l,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,
 
