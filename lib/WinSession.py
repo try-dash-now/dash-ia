@@ -145,11 +145,11 @@ class WinSession(spawn, object):
             except Exception as e:
                 self.error(str(e))
     def msg(self, msg, *args):
+        super(WinSession, self).msg(msg,*args)
         if msg.find('recv')!=-1:
             self.output+=args[0]
             self.seslog.write(args[0])
-            print(args[0])
-        super(WinSession, self).msg(msg,*args)
+            #print(args[0])
 
     def GetFunArgs(self,*argvs, **kwargs):
         self.argvs=[]
@@ -256,11 +256,17 @@ class WinSession(spawn, object):
         m =None
         if not nowait:
             if not self.fInteractionMode:
+                time.sleep(0.1)
                 output =self.expect(["%s"%(pat)],float(wait))
-                self.output= output[2]
+                #self.output= output[2]
                 if output[0]==-1:
-                    raise Exception('no Expect(%s) found'%(str(pat)))
+                    m =sre.search('%s'%(pat), self.output, sre.M|sre.DOTALL)
+                    if not m:
+                        raise Exception('no Expect(%s) found'%(str(pat)))
+                else:
+                    self.output= output[2]
                 m = sre.search(pat,self.output, sre.M|sre.DOTALL)
+
             else:
                 interval=0.1
                 counter =0
@@ -281,8 +287,8 @@ class WinSession(spawn, object):
         self.fExpecting=False
         if not m:
             raise Exception('Expect("%s", %f) Failed'%(pat,float(wait)))
-        self.match = self.output
-        return self.output
+        self.match = m.group()#self.output
+        return self.match # self.output
 
     def SetInteractionMode(self,flag):
         self.fInteractionMode=flag
