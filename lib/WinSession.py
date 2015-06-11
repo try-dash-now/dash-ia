@@ -256,7 +256,6 @@ class WinSession(spawn, object):
         m =None
         if not nowait:
             if not self.fInteractionMode:
-                time.sleep(0.1)
                 output =self.expect(["%s"%(pat)],float(wait))
                 #self.output= output[2]
                 if output[0]==-1:
