@@ -295,27 +295,8 @@ class Case(object):
         self.hdrlog .setFormatter(logging.Formatter('%(asctime)s -%(levelname)s: %(message)s'))
         self.logger.addHandler(self.hdrlog )
         sutstring =''
-
-
-        #self.LogDir='./'
-
-
-
-
-
-
-
-
-
-
-
-        for sut in self.SUTs.keys():
-            sutstring +='SUT(%s):[%s]\n'%(sut,self.SUTs[sut])
-            self.Session.update({sut:self.Connect2Sut(sut)})
-
         self.SUTNAME= sorted(suts.keys())
         self.SUTNAME.append('__case__')
-        
         self.RecordReplay = [['[cs]'], ['#VAR'],['#SETUP']]
         newrecord = ['#SUTNAME', 'COMMAND', 'EXPECT', 'WAIT TIME(s)']
         before1staction= ['#', '','','',]
@@ -324,6 +305,24 @@ class Case(object):
             before1staction.append('')
         self.RecordReplay.append(newrecord)
         self.RecordReplay.append(before1staction)
+
+
+        for sut in self.SUTs.keys() :
+            if sut =='__case__':
+                continue
+            sutstring +='SUT(%s):[%s]\n'%(sut,self.SUTs[sut])
+            self.info('connecting to %s'%(sut))
+            try:
+                self.Session.update({sut:self.Connect2Sut(sut)})
+            except Exception as e:
+                import traceback
+                self.info(traceback.format_exc())
+                raise Exception('Can NOT connected to %s'%sut)
+            self.info('connected to  to %s'%(sut))
+
+
+        
+
         self.InitialDone=True
 
         #print(self.thInteraction)

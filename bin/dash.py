@@ -22,6 +22,10 @@ class MyFrame(wx.Frame):
     IAThread=None
     bIARunning =False
     ia = None
+    historyCmd =None
+    CmdIndex = -1
+    ManualCaseHistoryCmd =None
+    ManualCaseCmdIndex = -1
     def __init__(self, parent, title):
         if self.TrialExpired():
             return
@@ -54,7 +58,8 @@ class MyFrame(wx.Frame):
         menuBar = wx.MenuBar()
         menuBar.Append(filemenu,"&File") # Adding the "filemenu" to the MenuBar
         self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
-
+        self.historyCmd=[]
+        self.ManualCaseHistoryCmd=[]
 
 
         # self.sizer2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -249,20 +254,78 @@ class MyFrame(wx.Frame):
         keycode = e.GetKeyCode()
         try:
             if keycode in [ wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_TAB]:
+                line = str(self.MainInput.GetValue())
 
                 if self.bIARunning and self.ia.tc.IsAlive():
-                    line = str(self.MainInput.GetValue())
+                    self.historyCmd.append(line)
+                    self.CmdIndex =len(self.historyCmd)-1
+
+                    self.MainOutput.AppendText('\t%s\n'%line)
                     if keycode ==wx.WXK_TAB:
                         line = line+'\t'
+
                     line = self.ia.precmd(line)
                     line = self.ia.precmd(line)
                     stop = self.ia.onecmd(line)
                     stop = self.ia.postcmd(stop, line)
                     self.ia.postloop()
+
                     self.MainInput.SetValue('')
                     self.Show()
                 else:
+                    self.ManualCaseHistoryCmd.append(line)
+                    self.ManualCaseCmdIndex =len(self.ManualCaseHistoryCmd)-1
                     self.onManualRun(e)
+            elif keycode ==wx.WXK_UP:
+                if self.bIARunning and self.ia.tc.IsAlive():
+                    self.CmdIndex-=1
+                    l = len(self.historyCmd)
+                    if -1 <self.CmdIndex <l:
+                        pass
+                    else:
+                        self.CmdIndex=l-1
+
+                    if l>0:
+                        self.MainInput.SetValue(self.historyCmd[self.CmdIndex])
+                    else:
+                        self.MainInput.SetValue('')
+                else:
+                    self.ManualCaseCmdIndex-=1
+                    l = len(self.ManualCaseHistoryCmd)
+                    if -1 <self.ManualCaseCmdIndex <l:
+                        pass
+                    else:
+                        self.ManualCaseCmdIndex=l-1
+
+                    if l>0:
+                        self.MainInput.SetValue(self.ManualCaseHistoryCmd[self.ManualCaseCmdIndex])
+                    else:
+                        self.MainInput.SetValue('')
+            elif keycode ==wx.WXK_DOWN:
+                if self.bIARunning and self.ia.tc.IsAlive():
+                    self.CmdIndex+=1
+                    l = len(self.historyCmd)
+                    if -1 <self.CmdIndex <l:
+                        pass
+                    else:
+                        self.CmdIndex=0
+
+                    if l>0:
+                        self.MainInput.SetValue(self.historyCmd[self.CmdIndex])
+                    else:
+                        self.MainInput.SetValue('')
+                else:
+                    self.ManualCaseCmdIndex+=1
+                    l = len(self.ManualCaseHistoryCmd)
+                    if -1 <self.ManualCaseCmdIndex <l:
+                        pass
+                    else:
+                        self.ManualCaseCmdIndex=0
+
+                    if l>0:
+                        self.MainInput.SetValue(self.ManualCaseHistoryCmd[self.ManualCaseCmdIndex])
+                    else:
+                        self.MainInput.SetValue('')
         except :
                 self.MainInput.SetValue('')
                 self.Show()
@@ -397,7 +460,7 @@ class MyFrame(wx.Frame):
 
 
         self.bIARunning =False
-
+        self.CmdIndex=-1
         self.ia=None
         sys.stdout =tmp
 

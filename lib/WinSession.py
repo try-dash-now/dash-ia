@@ -278,7 +278,6 @@ class WinSession(spawn, object):
                         self.InteractionMatch=m.group(0)
                         self.InteractionBuffer=m.group(1)#.decode("utf-8")
                         break
-
                     time.sleep(interval)
         else:
             m = sre.search(pat,self.output, sre.M|sre.DOTALL)
