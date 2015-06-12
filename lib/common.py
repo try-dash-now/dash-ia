@@ -7,6 +7,35 @@ created 2015/5/8 
 """
 import io,csv,re
 DELIMITER = '[${PATTERN_NOT_EXIST}$]'
+
+class baseSession(object):
+    sutname=None
+    attrs =None
+    seslog=None
+    loginstep =None
+    def __init__(self, name,attrs={},logger=None, logpath=None):
+        if logpath ==None:
+            import os
+            logpath = '.%s'%(os.path.sep)
+        self.sutname=name
+        self.attrs=attrs
+        if not attrs.get('TIMEOUT'):
+            self.attrs.update({'TIMEOUT':int(30)})
+        else:
+            self.attrs.update({'TIMEOUT':int(attrs.get('TIMEOUT'))})
+        import os
+        log = os.path.abspath(logpath)
+        log= '%s%s%s'%(log,os.path.sep,'%s.log'%name)
+        if self.attrs.get('LOGIN'):
+            from common import csvstring2array
+            self.loginstep= csvstring2array(self.attrs['LOGIN'])
+        self.seslog = open(log, "wb")
+    def CallFun(self,functionName,args=[], kwargs={}):
+        functionName(*args, **kwargs)
+
+
+
+
 def bench2dict(csvfile, delimiter='='):
     reComment = re.compile('\s*#', re.I)
     

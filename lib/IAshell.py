@@ -250,20 +250,17 @@ class IAshell(Cmd, object):
         #print('empty line')
         #self.RunCmd('')
 
-    def QureyOutput(self, filehandler=None):
-
-        if not filehandler:
-            filehandler =sys.stdout
+    def QureyOutput(self):
         while self.InteractionRunning:
             if not self.PauseOut:
                 if self.sutname!='tc':
                     output = self.tc.RequestSUTOutput(self.client, self.sutname)
                     if len(output)!=0 and self.UpdatingOutput :
-                        tmp =sys.stdout
-                        sys.stdout= filehandler
+                        #tmp =sys.stdout
+                        #sys.stdout= filehandler
                         print(os.linesep+'\t'+output.replace('\n', '\n\t') )
                         print(self.prompt)
-                        sys.stdout=tmp
+                        #sys.stdout=tmp
             if len(self.InteractionOutput)   :
                 print(self.InteractionOutput)
             self.InteractionOutput=''

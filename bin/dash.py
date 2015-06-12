@@ -436,7 +436,7 @@ class MyFrame(wx.Frame):
 
         self.bIARunning =True
         try:
-            self.ia =IAshell('TC',bench, sutnames,manuallogdir, outputfile=self.MainOutput )
+            self.ia =IAshell('TC',bench, sutnames,manuallogdir)
 
 
             print('#'*80)

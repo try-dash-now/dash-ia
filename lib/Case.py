@@ -176,7 +176,7 @@ class Case(object):
                             continue
                         if os.name =='nt':
                             try:
-                                self.Session[sutname].match =self.Session[sutname].read_until('.+',0.01)
+                                self.Session[sutname].match =self.Session[sutname].read_until('.+',0.01)#self.Session[sutname].output#
                             except Exception as e:
                                 self.Session[sutname].match =''
 

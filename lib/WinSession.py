@@ -13,7 +13,8 @@ import time
 import re as sre
 import traceback
 reSessionClosed =sre.compile ('Connection closed by foreign host',sre.M)
-class WinSession(spawn, object):
+from common import baseSession
+class WinSession(spawn, baseSession):
     match = None
     attrs={}
     sutname='SUT'
@@ -43,28 +44,13 @@ class WinSession(spawn, object):
                 self.close()
 
     def __init__(self,name,attrs={},logger=None, logpath=None):
-        if logpath ==None:
-            import os
-            logpath = '.%s'%(os.path.sep)
-        self.sutname=name
-        self.attrs=attrs
-        command = attrs.get('CMD')
-        if not attrs.get('TIMEOUT'):
-            self.attrs.update({'TIMEOUT':int(30)})
-        else:
-            self.attrs.update({'TIMEOUT':int(attrs.get('TIMEOUT'))})
-        import os
-        log = os.path.abspath(logpath)
-        log= '%s%s%s'%(log,os.path.sep,'%s.log'%name)
-        if self.attrs.get('LOGIN'):
-            from common import csvstring2array
-            self.loginstep= csvstring2array(self.attrs['LOGIN'])
+        baseSession.__init__(self, name,attrs,logger,logpath)
 
-        self.seslog = open(log, "wb")
         host=""
         port=23
         reHostOnly=  sre.compile('\s*telnet\s+([\d.\w\-_]+)\s*',sre.I)
         reHostPort = sre.compile('\s*telnet\s+([\d.\w]+)\s+(\d+)', sre.I )
+        command = attrs.get('CMD')
         m1=sre.match(reHostOnly, command)
         m2=sre.match(reHostPort, command)
         if m1:
