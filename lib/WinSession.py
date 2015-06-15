@@ -25,9 +25,9 @@ class WinSession(spawn, baseSession):
     output=''
     Connect2SUTDone=False
     lastActionTime=None
-    fInteractionMode=False
-    InteractionBuffer=''
-    InteractionMatch=''
+    #fInteractionMode=False
+    #InteractionBuffer=''
+    #InteractionMatch=''
     fExpecting=False
     fSending = False
     stdout=None
@@ -264,15 +264,7 @@ class WinSession(spawn, baseSession):
         self.match = m.group()#self.output
         return self.match # self.output
 
-    def SetInteractionMode(self,flag):
-        self.fInteractionMode=flag
 
-    def AppendData2InteractionBuffer(self,data):
-        self.InteractionBuffer+=data
-
-    def StartInteractionMode(self,flag):
-
-        self.fInteractionMode=flag
 
 if __name__=='__main__':
     try:

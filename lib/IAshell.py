@@ -164,7 +164,7 @@ class IAshell(Cmd, object):
         steps=[[],[],[]]
         mode ='FULL'
         self.tc= Case(casename,self.sut,steps=[[],[],[]],mode='FULL',DebugWhenFailed=False,logdir=logfiledir,caseconfigfile='../lib/case.cfg')
-        self.thQureyOut = threading.Thread(target=self.QureyOutput,args = [outputfile] )
+        self.thQureyOut = threading.Thread(target=self.QureyOutput,args = [] )#outputfile
         self.thQureyOut.start()
         self.client ='interaction'
         self.tc.AddClient(self.client)

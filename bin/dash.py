@@ -203,7 +203,7 @@ class MyFrame(wx.Frame):
         self.info(respone)
 
     def TrialExpired(self):
-
+        return False
         import time
         time.ctime()
         from datetime import datetime

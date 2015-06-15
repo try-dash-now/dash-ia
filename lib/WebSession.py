@@ -60,9 +60,9 @@ class WebSession(baseSession):
             element= self.webdriver.find_element_by_link_text(by)
         self.currentElement=element
         return  self.currentElement
-    def Send(self,by , keys, url=None, type =None):
+    def Send(self,by , keys, type =None, index=None, url=None):
         if index:
-            element = self.GetOneFromElements(type,by, index)
+            element = self.GetOneFromElements(type, by, index)
         else:
             element = self.GetElement(type,by)
         for key in keys:
@@ -73,7 +73,7 @@ class WebSession(baseSession):
 
     def get(self, url):
         self.webdriver.get(self.CheckUrl(url))
-    def click(self, by ,url=None, type =None):
+    def Click(self, by, type =None ,index =None, url=None):
         if index:
             element = self.GetOneFromElements(type,by, index)
         else:
@@ -81,14 +81,17 @@ class WebSession(baseSession):
 
         element.click()
 
-    def Select(self, obj, selectBy, selectKey):
+    def select(self, obj, selectBy, selectKey):
+        selectBy = selectBy.strip().lower()
         if selectBy in [None, '']:
             obj.select_by_visible_text(selectKey)
         elif selectBy.strip().lower()== 'value':
             obj.select_by_value(selectKey)
         elif selectBy.strip().lower()== 'index':
             obj.select_by_index(selectKey)
-    def select(self, by, selectBy, selectKey, url=None, type =None, index =None):
+        elif selectBy == 'text':
+            obj.select_by_visible_text(selectKey)
+    def Select(self, by, selectBy, selectKey, type =None, index =None, url=None):
         if not type:
             type ='id'
         else:
@@ -98,8 +101,8 @@ class WebSession(baseSession):
         else:
             element = self.GetElement(type,by)
         selectObj = Select(element)
-        self.Select(selectObj, selectBy,selectKey)
-    def clear(self, by ,url=None, type =None,index=None):
+        self.select(selectObj, selectBy,selectKey)
+    def Clear(self, by, type =None,index=None ,url=None):
         if index:
             element = self.GetOneFromElements(type,by, index)
         else:

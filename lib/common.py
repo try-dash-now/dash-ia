@@ -15,6 +15,9 @@ class baseSession(object):
     loginstep =None
     argvs=None
     kwargvs =None
+    InteractionBuffer=None
+    fInteractionMode=False
+    InteractionMatch =None
     def __init__(self, name,attrs={},logger=None, logpath=None):
         self.argvs=[]
         self.kwargvs={}
@@ -34,6 +37,8 @@ class baseSession(object):
             from common import csvstring2array
             self.loginstep= csvstring2array(self.attrs['LOGIN'])
         self.seslog = open(log, "wb")
+        self.InteractionBuffer=''
+        self.InteractionMatch=''
     def CallFun(self,functionName,args=[], kwargs={}):
         functionName(*args, **kwargs)
 
@@ -83,7 +88,15 @@ class baseSession(object):
         return (IsCallFunction,fun,arg,kwarg)
     def SLEEP(self,sec=1.0):
         time.sleep(float(sec))
+    def SetInteractionMode(self,flag):
+        self.fInteractionMode=flag
 
+    def AppendData2InteractionBuffer(self,data):
+        self.InteractionBuffer+=data
+
+    def StartInteractionMode(self,flag):
+
+        self.fInteractionMode=flag
 
 def bench2dict(csvfile, delimiter='='):
     reComment = re.compile('\s*#', re.I)
