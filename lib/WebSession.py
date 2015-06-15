@@ -140,10 +140,10 @@ class WebSession(baseSession):
                 output += "input[%d] id:" %i+"%s\n"%(str(e.id))
                 i+=1
                 time.sleep(wait)
-            except Exception as error:
-                i+=1
-                output += "input[%d] id:" %i+"%s\n"%(str(error.msg))
+            except Exception as err:
 
+                output += "input[%d] id:" %i+"%s\n"%(str(err.msg))
+                i+=1
         print(output)
 
 
