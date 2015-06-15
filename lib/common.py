@@ -7,13 +7,17 @@ created 2015/5/8 
 """
 import io,csv,re
 DELIMITER = '[${PATTERN_NOT_EXIST}$]'
-
+import time
 class baseSession(object):
     sutname=None
     attrs =None
     seslog=None
     loginstep =None
+    argvs=None
+    kwargvs =None
     def __init__(self, name,attrs={},logger=None, logpath=None):
+        self.argvs=[]
+        self.kwargvs={}
         if logpath ==None:
             import os
             logpath = '.%s'%(os.path.sep)
@@ -33,7 +37,52 @@ class baseSession(object):
     def CallFun(self,functionName,args=[], kwargs={}):
         functionName(*args, **kwargs)
 
+    def GetFunArgs(self,*argvs, **kwargs):
+        self.argvs=[]
+        self.kwargvs={}
+        #re-assign for self.argvs and self.kwargvs
+        for arg in argvs:
+            self.argvs.append(arg)
+        for k in kwargs.keys():
+            self.kwargvs.update({k:kwargs[k]})
+    def ParseCmdInAction(self,cmd):
+        IsCallFunction= True
+        sreFunction = sre.compile('\s*FUN\s*:\s*(.+?)\s*\(\s*(.*)\s*\)|\s*(.+?)\s*\(\s*(.*)\s*\)',sre.IGNORECASE)
+        m = sre.match(sreFunction, cmd)
+        fun =cmd
+        arg = ""
+        kwarg ={}
+        if m != None :
+            if m.group(1) !=None:
+                fun = m.group(1)
+                arg = m.group(2)
+            else:
+                fun = m.group(3)
+                arg = m.group(4)
 
+            fun = self.__getattribute__(fun) #self.__getattribute__(fun)
+            import inspect
+            (args, varargs, keywords, defaults) =inspect.getargspec(fun)
+            try:
+                parsestr= "self.GetFunArgs(%s)"%(str(arg))
+                eval(parsestr)
+            except Exception as e:
+                str(arg).strip()
+                if sre.search(',',arg):
+                    self.argvs =arg.split(',')
+                elif len(str(arg).strip())==0:
+                    self.argvs =[]
+                else:
+                    self.argvs =[arg]
+
+            arg =self.argvs
+            kwarg = self.kwargvs
+        else:
+            IsCallFunction = False
+            fun = cmd
+        return (IsCallFunction,fun,arg,kwarg)
+    def SLEEP(self,sec=1.0):
+        time.sleep(float(sec))
 
 
 def bench2dict(csvfile, delimiter='='):

@@ -20,8 +20,7 @@ class WinSession(spawn, baseSession):
     sutname='SUT'
     logger= None
     loginstep=[]
-    argvs=[]
-    kwargvs={}
+
     seslog=None
     output=''
     Connect2SUTDone=False
@@ -137,16 +136,7 @@ class WinSession(spawn, baseSession):
             self.seslog.write(args[0])
             #print(args[0])
 
-    def GetFunArgs(self,*argvs, **kwargs):
-        self.argvs=[]
-        self.kwargvs={}
-        #re-assign for self.argvs and self.kwargvs
-        for arg in argvs:
-            self.argvs.append(arg)
-        for k in kwargs.keys():
-            self.kwargvs.update({k:kwargs[k]})
-    def CallFun(self,functionName,args=[], kwargs={}):
-        functionName(*args, **kwargs)
+
 
     def isalive(self):
         try:
@@ -279,44 +269,7 @@ class WinSession(spawn, baseSession):
 
     def AppendData2InteractionBuffer(self,data):
         self.InteractionBuffer+=data
-    def ParseCmdInAction(self,cmd):
-        IsCallFunction= True
-        sreFunction = sre.compile('\s*FUN\s*:\s*(.+?)\s*\(\s*(.*)\s*\)|\s*(.+?)\s*\(\s*(.*)\s*\)',sre.IGNORECASE)
-        m = sre.match(sreFunction, cmd)
-        fun =cmd
-        arg = ""
-        kwarg ={}
-        if m != None :
-            if m.group(1) !=None:
-                fun = m.group(1)
-                arg = m.group(2)
-            else:
-                fun = m.group(3)
-                arg = m.group(4)
 
-            fun = self.__getattribute__(fun) #self.__getattribute__(fun)
-            import inspect
-            (args, varargs, keywords, defaults) =inspect.getargspec(fun)
-            try:
-                parsestr= "self.GetFunArgs(%s)"%(str(arg))
-                eval(parsestr)
-            except Exception as e:
-                str(arg).strip()
-                if sre.search(',',arg):
-                    self.argvs =arg.split(',')
-                elif len(str(arg).strip())==0:
-                    self.argvs =[]
-                else:
-                    self.argvs =[self.argvs]
-
-            arg =self.argvs
-            kwarg = self.kwargvs
-        else:
-            IsCallFunction = False
-            fun = cmd
-        return (IsCallFunction,fun,arg,kwarg)
-    def SLEEP(self,sec=1.0):
-        time.sleep(float(sec))
     def StartInteractionMode(self,flag):
 
         self.fInteractionMode=flag

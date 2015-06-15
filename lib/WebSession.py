@@ -16,179 +16,140 @@ from selenium.webdriver.support.ui import Select
 # from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
 # from selenium.webdriver.support import expected_conditions as EC
 from common import baseSession
-class WebSession(baseSession,webdriver.Firefox):
+class WebSession(baseSession):
+    url=None
+    webdriver =None
+    currentElement=None
     def __init__(self,name,attrs={},logger=None, logpath=None):
+        if attrs['BROWSER'].strip()=='':
+            attrs['BROWSER']='FireFox'
+
         baseSession.__init__(self, name,attrs,logger,logpath)
-        webdriver.Firefox.__init__(self)
+
+        if attrs['BROWSER'].lower() == 'firefox':
+            self.webdriver = webdriver.Firefox()
+        elif attrs['BROWSER'].lower() == 'chrome':
+            self.webdriver = webdriver.Chrome()
+        elif attrs['BROWSER'].lower() == 'chrome':
+            self.webdriver = webdriver.Ie()
+
+    def CheckUrl(self,url):
+        if not self.url:
+            self.url = url
+
+        if url:
+            self.url = url
+
+        if not self.url:
+            self.error
+            raise Exception('Url hasn\'t been given!')
+        return  self.url
+    def GetElement(self, type, by):
+        if not type:
+            type ='id'
+        else:
+            type= type.lower()
+        element=None
+        if type== 'id':
+            element= self.webdriver.find_element_by_id(by)
+        elif type == 'xpath':
+            element= self.webdriver.find_element_by_xpath(by)
+        elif type == 'name':
+            element=self.webdriver.find_element_by_name(by)
+        elif type == 'link_text':
+            element= self.webdriver.find_element_by_link_text(by)
+        self.currentElement=element
+        return  self.currentElement
+    def Send(self,by , keys, url=None, type =None):
+        if index:
+            element = self.GetOneFromElements(type,by, index)
+        else:
+            element = self.GetElement(type,by)
+        for key in keys:
+            if key in ['\n', '\r']:
+                element.send_keys(Keys.RETURN)
+            else:
+                element.send_keys(key)
+
+    def get(self, url):
+        self.webdriver.get(self.CheckUrl(url))
+    def click(self, by ,url=None, type =None):
+        if index:
+            element = self.GetOneFromElements(type,by, index)
+        else:
+            element = self.GetElement(type,by)
+
+        element.click()
+
+    def Select(self, obj, selectBy, selectKey):
+        if selectBy in [None, '']:
+            obj.select_by_visible_text(selectKey)
+        elif selectBy.strip().lower()== 'value':
+            obj.select_by_value(selectKey)
+        elif selectBy.strip().lower()== 'index':
+            obj.select_by_index(selectKey)
+    def select(self, by, selectBy, selectKey, url=None, type =None, index =None):
+        if not type:
+            type ='id'
+        else:
+            type= type.lower()
+        if index:
+            element = self.GetOneFromElements(type,by, index)
+        else:
+            element = self.GetElement(type,by)
+        selectObj = Select(element)
+        self.Select(selectObj, selectBy,selectKey)
+    def clear(self, by ,url=None, type =None,index=None):
+        if index:
+            element = self.GetOneFromElements(type,by, index)
+        else:
+            element = self.GetElement(type,by)
+
+        element.clear()
 
 
-def changeIP(driver, ip, newIP):
-    ipnew = '1.1.1.1'
-    driver.get('http://%s/advancedsetup_schedulingaccess.html'%ip)
-    apply_button = driver.find_element_by_link_text("DHCP Settings")
-    apply_button.click()
+    def GetOneFromElements(self, type, by, index):
+        if not type:
+            type ='id'
+        else:
+            type= type.lower()
+        element=None
+        if type== 'id':
+            element= self.webdriver.find_elements_by_id(by)
+        elif type == 'xpath':
+            element= self.webdriver.find_elements_by_xpath(by)
+        elif type == 'name':
+            element=self.webdriver.find_elements_by_name(by)
+        elif type == 'link_text':
+            element= self.webdriver.find_elements_by_link_text(by)
+        self.currentElement = element[index]
+        return self.currentElement
 
-    try:
-        assert "CenturyLink Modem Configuration" in driver.title
-        apply_button = driver.find_element_by_xpath("//input[@name='dhcp_server'][@checked='checked']")
-        apply_button.click()
-        #name="IPInterfaceIPAddress" id="IPInterfaceIPAddress"
-        IPaddress =   driver.find_element_by_xpath("//input[@name='IPInterfaceIPAddress'][@id='IPInterfaceIPAddress']")
-        IPaddress.clear()
-        IPaddress.send_keys(ipnew)
-        IPaddress.clear()
-        IPaddress.send_keys(ip)
-        IPaddress.send_keys(Keys.RETURN)
-        disalbe =driver.find_elements_by_name("dhcp_server")#("//input[@name='dhcp_server'][@type='radio']").
-        #disalbe = apply_button.select_by_visible_text("Disable")
-        disalbe[1].click()
-        #disalbe.click()
-        apply_button = driver.find_element_by_link_text("Apply")
-        apply_button.click()
-    except Exception,e:
-        apply_button = driver.find_element_by_link_text("Logout")
-        apply_button.click()
-        driver.quit()
-        print("FAILURE: Unable to login to GUI on modem. " + str(e))
-        return False
-def actiontec_change_defaults(ip, newip):
-    if not ip:
-        ip='192.168.0.1'
-    else:
-        ip =ip.strip()
-    url = 'http://%s/supportconsole'%(ip)#modem["defaultURL"]
-    telnet_url = "http://%s/advancedsetup_remotetelnet.html"%(ip) #modem["telnetURL"]
-    admin_url = "http://%s/advancedsetup_admin.html"%(ip) # modem["adminURL"]
-    login =  "CenturyL1nk"
-    password = 'CTLsupport12'
-    newlogin = 'admin'
-    newpassword = 'admin'
-    import sys,os
-    #sys.path.insert(0, os.path.abspath(os.getcwd()))
-    print('\n'.join(sys.path))
-    webdriver.Chrome()
-    driver = webdriver.Firefox()#webdriver.Chrome()#('C:/syu/auto/webGUI')#
-    driver.get(url)
-    #login to modem
-    try:
-        assert "CenturyLink Modem Configuration" in driver.title
-        elem = driver.find_element_by_name("admin_user_name")
-        elem.send_keys(login)
-        elem = driver.find_element_by_name("admin_password")
-        elem.send_keys(password)
-        elem.send_keys(Keys.RETURN)
-        apply_button = driver.find_element_by_link_text("Apply")
-        apply_button.click()
-    except Exception,e:
-        driver.quit()
-        print("FAILURE: Unable to login to GUI on modem. " + str(e))
-        return False
+    def WalkElement(self, wait = 5):
+        elements=None
+        elements = self.webdriver.find_elements_by_xpath('//input')
+        import time
+        i = 0
+        output = ''
+        for e in elements:
+            try:
 
+                #print("input[%d] id:" %i ,e.id)
+                e.click()
+                e.send_keys('Index%d'%i)
+                output += "input[%d] id:" %i+"%s\n"%(str(e.id))
+                i+=1
+                time.sleep(wait)
+            except Exception as error:
+                i+=1
+                output += "input[%d] id:" %i+"%s\n"%(str(error.msg))
 
-
-
-
- #config wan as VDSL2
-    driver.get('http://%s/advancedsetup_schedulingaccess.html'%ip)
-    apply_button = driver.find_element_by_link_text("Broadband Settings")
-    apply_button.click()
-    driver.get('http://%s/advancedsetup_broadbandsettings.html'%(ip))
-    try:
-        assert "CenturyLink Modem Configuration" in driver.title
-        #wan_type
-        telnet_select = Select(driver.find_element_by_id("wan_type"))
-        telnet_select.select_by_visible_text("VDSL2")
-        apply_button = driver.find_element_by_link_text("Apply")
-        apply_button.click()
-    except Exception,e:
-        driver.quit()
-        print("FAILURE: Unable to off WIFI  GUI on modem. " + str(e))
-        return False
-
-
-
-
-    #OFF WIFI
-    driver.get('http://%s/wirelesssetup_basicsettings.html'%(ip))
-    try:
-        assert "CenturyLink Modem Configuration" in driver.title
-        elem = driver.find_element_by_id("id_wl_on")
-        elem.click()
-        elem = driver.find_element_by_id("id_wl_off")
-        elem.click()
-        apply_button = driver.find_element_by_link_text("Apply")
-        apply_button.click()
-    except Exception,e:
-        driver.quit()
-        print("FAILURE: Unable to off WIFI  GUI on modem. " + str(e))
-        return False
-
-    #end of OFF WIFI
-    driver.get(telnet_url)
-    try:
-        assert "CenturyLink Modem Configuration" in driver.title
-        telnet_select = Select(driver.find_element_by_id("remote_management"))
-        telnet_select.select_by_visible_text("Telnet Enabled")
-        telnet_login = driver.find_element_by_id("admin_user_name")
-        telnet_password = driver.find_element_by_id("admin_password")
-        telnet_confirm = driver.find_element_by_id("confirmPass")
-        apply_button = driver.find_element_by_link_text("Apply")
-        telnet_login.clear()
-        telnet_password.clear()
-        telnet_confirm.clear()
-        telnet_login.send_keys(newlogin)
-        telnet_password.send_keys(newpassword)
-        telnet_confirm.send_keys(newpassword)
-        apply_button.click()
-    except Exception,e:
-        driver.quit()
-        print("FAILURE: Unable to set telnet password through GUI on modem. " + str(e))
-        return False
-    driver.get(telnet_url)
-    driver.get(admin_url)
-    try:
-        assert "CenturyLink Modem Configuration" in driver.title
-        admin_login = driver.find_element_by_id("admin_user_name")
-        admin_password = driver.find_element_by_id("admin_password")
-        admin_confirm = driver.find_element_by_id("confirmPass")
-        apply_button = driver.find_element_by_link_text("Apply")
-        admin_login.clear()
-        admin_password.clear()
-        admin_confirm.clear()
-        admin_login.send_keys(newlogin)
-        admin_password.send_keys(newpassword)
-        admin_confirm.send_keys(newpassword)
-        apply_button.click()
-    except Exception,e:
-        driver.quit()
-        print("FAILURE: Unable to set administration password through GUI on modem. " + str(e))
-        return False
-
-
-#config the lan ip address:
-    changeIP(driver, ip, newip)
+        print(output)
 
 
 
 
-    driver.get(admin_url)
-    logout_button = driver.find_element_by_id("logout_btn")
-    logout_button.click()
-    driver.close()
-    print("SUCCESS: Successfully enabled telnet and updated administrative username and password to " + newlogin + " " + newpassword + ".")
-    return True
 
-if __name__ == '__main__':
-    print("######################NEW TEST---------------------------")
-    import sys
-    ip = sys.argv[1]
-    newip = sys.argv[2]
-    try:
-        #ip = '192.168.0.153'
-        actiontec_change_defaults(ip, newip)
-    except Exception as e:
-        import traceback
-        print(traceback.format_exc())
 
-    #actiontec_telnet("192.168.0.1","admin","admin")
-    #/advancedsetup_remotetelnet.html
+
+
