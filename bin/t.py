@@ -9,7 +9,7 @@ if libpath not in sys.path:
     sys.path.insert(0,libpath)
 prodpath = os.path.sep.join([pardir,'product'])
 if prodpath not in sys.path:
-    sys.path.insert(0,prodpath)
+    sys.path.insert(1,prodpath)
 from common import csvfile2dict
 if __name__ == "__main__":
     returncode = 0

@@ -5,7 +5,11 @@ __mail__ = 'try.dash.now@gmail.com'
 
 import os,time,re
 import sys
-sys.path.append(os.getcwd())
+
+libpath = os.path.sep.join([os.path.dirname(os.getcwd()),'lib'])
+if libpath not in sys.path:
+    sys.path.insert(0,libpath)
+#from WebSession import WebSession
 from common import DumpStack
 import threading
 reCtrl = re.compile("^\s*ctrl\s*:(.*)", re.I)
