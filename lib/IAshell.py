@@ -411,5 +411,6 @@ class IAshell(Cmd, object):
     def showme(self,data='hello'):
         print(data)
         return data
-
+# TODO: Sean, 2015-6-16, Add function allow user check the function description, defines of augurment, alive help, in the interaction RR(Record and Replay) mode
+# TODO: Sean, 2015-6-16, create a py file after Interaction RR (Record and Replay) mode--for debug in python IDE easier
 
