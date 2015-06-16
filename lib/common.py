@@ -99,6 +99,8 @@ class baseSession(object):
         self.fInteractionMode=flag
     def  SendLine(self,command, clearbuffer=True,AntiIdle=False,Ctrl=False,Alt=False):
         pass
+    def Expect(self,pat , wait=2, nowait=False):
+        pass
 
 def bench2dict(csvfile, delimiter='='):
     reComment = re.compile('\s*#', re.I)
@@ -642,7 +644,11 @@ class CCSV2Case(object):
             msg = traceback.format_exc()
             print(msg)
             raise Exception( "GetSUT() failed: %s"%(str(e)))
-def LoadCaseFromCsv(bench,csvfile,casename, mode, argv=[]):
+def LoadCaseFromCsv(bench,csvfile,casename, mode, argv=None ):
+    if argv:
+        pass
+    else:
+        argv =[]
     case = CCSV2Case(bench, csvfile,casename, argv)
     case.PopulateCase(csvfile, casename)
     case.GetMode(mode)

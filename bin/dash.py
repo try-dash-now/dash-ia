@@ -35,7 +35,7 @@ class MyFrame(wx.Frame):
         # A "-1" in the size parameter instructs wxWidgets to use the default size.
         # In this case, we select 200px width and the default height.
         wx.Frame.__init__(self, parent, title=title, size=(200,-1))
-        self.MainOutput = wx.TextCtrl(self, style=wx.TE_MULTILINE|wx.TE_READONLY)
+        self.MainOutput = wx.TextCtrl(self, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_RICH)
         self.MainOutput.SetValue('''Read Only Output.
                                launch HTTP server on port 8080: menu 'File'->'Launch HTTP server'
                                run a single case: http://localhost:8080/case
@@ -241,7 +241,8 @@ class MyFrame(wx.Frame):
         if self.bIARunning:
             select= self.MainOutput.GetStringSelection()
             self.MainOutput.SetSelection(0,0)
-            self.MainInput.SetValue("Expect('%s',1)"%select)
+            if len(select)>0:
+                self.MainInput.SetValue("Expect('%s',1)"%select)
             self.MainInput.SetFocus()
             #self.MainOutput.Bind(wx.EVT_KILL_FOCUS, self.OnSelection)
             self.Refresh()
@@ -445,6 +446,7 @@ class MyFrame(wx.Frame):
             try:
                 while self.ia.tc.IsAlive():
                     try:
+                        self.MainOutput.SetStyle(1, 5, wx.TextAttr("red", "blue"))
                         self.Show()
                         time.sleep(.1)
                     except Exception as e:

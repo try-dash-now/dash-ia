@@ -65,12 +65,45 @@ class IAshell(Cmd, object):
                     break
                 block+=1
 
-    def loadcmd(self, filename):
+    def loadtxt(self, filename):
         with open(filename ,'r') as f:
             cmd = f.readlines()
             self.cmdbank=[]
             for c in cmd:
                 self.cmdbank.append(c)
+    def loadcsv(self, filename,bench, casename, mode, arg=None):
+        from common import  LoadCaseFromCsv
+        #bench,csvfile,casename, mode, argv=None
+
+        if arg:
+            from common import csvstring2array
+            arg = csvstring2array(arg)
+            arg=arg[0]
+        else:
+            arg=[]
+        arg.insert(0,mode)
+        arg.insert(0,casename)
+        arg.insert(0,bench)
+        arg.insert(0,filename)
+        arg.insert(0,'')
+        sut,[Setup,Run,Teardown],MODE = LoadCaseFromCsv(bench,filename,casename,mode,arg)
+        for i in Setup:
+            if len(i)>1:
+                self.cmdbank.append(i[1])
+        for i in Run:
+            if len(i)>1:
+                self.cmdbank.append(i[1])
+        for i in Teardown:
+            if len(i)>1:
+                self.cmdbank.append(i[1])
+    def dumpcmd(self):
+        total = len(self.cmdbank)
+        print(self.prompt, 'total %d command in history'%total)
+        index = 1
+        for cmd in self.cmdbank:
+            print('\t%d\t %s'%(index, cmd))
+            index+=1
+
 
     def dump(self):
         index = 1
@@ -175,7 +208,9 @@ class IAshell(Cmd, object):
         #readline.set_completer_delims('\t\n')
     #     def do_set(self,name):
     #         print(name)
+        self.do_setsut(self.tc.Session.keys()[-1])
         self.helpDoc={}
+        self.cmdbank=[]
     def CreateDoc4Sut(self, sutname=None):
         if not sutname:
             self.sutname =sutname
@@ -443,6 +478,10 @@ class IAshell(Cmd, object):
         return data
 # Done: Sean, 2015-6-16, Add function allow user check the function description, defines of augurment, alive help, in the interaction RR(Record and Replay) mode
 # TODO: Sean, 2015-6-16, create a py file after Interaction RR (Record and Replay) mode--for debug in python IDE easier
-# todo: Sean, 2015-6-16, run a existing csv case, or part of the case
+# TODO: Sean, 2015-6-16, run a existing csv case, or part of the case
+# TODO: Sean, 2015-6-16, change font and color for MainOutput: for error,alarm should be high light or colored in red...
+# TODO: Sean, 2015-6-16, support hyper link in MainOutput, can open hyper link to file or web page
+
+
 
 
