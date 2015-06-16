@@ -479,7 +479,7 @@ class IAshell(Cmd, object):
 # Done: Sean, 2015-6-16, Add function allow user check the function description, defines of augurment, alive help, in the interaction RR(Record and Replay) mode
 # TODO: Sean, 2015-6-16, create a py file after Interaction RR (Record and Replay) mode--for debug in python IDE easier
 # TODO: Sean, 2015-6-16, run a existing csv case, or part of the case
-# TODO: Sean, 2015-6-16, change font and color for MainOutput: for error,alarm should be high light or colored in red...
+# done: Sean, 2015-6-16, change font and color for MainOutput: for error,alarm should be high light or colored in red...
 # TODO: Sean, 2015-6-16, support hyper link in MainOutput, can open hyper link to file or web page
 
 

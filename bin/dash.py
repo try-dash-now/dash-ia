@@ -26,6 +26,7 @@ class MyFrame(wx.Frame):
     CmdIndex = -1
     ManualCaseHistoryCmd =None
     ManualCaseCmdIndex = -1
+    OutputIndex =0
     def __init__(self, parent, title):
         if self.TrialExpired():
             return
@@ -98,7 +99,10 @@ class MyFrame(wx.Frame):
         self.Show()
         sys.stdout = self.MainOutput
         self.Maximize(True)
-
+        self.OutputIndex = len(self.MainOutput.GetValue())
+        font = wx.Font(12, wx.ROMAN,   wx.SLANT, wx.BOLD)
+        self.MainOutput.SetFont(font)
+        self.MainInput.SetFont(font)
     def info(self, msg):
         self.MainOutput.AppendText(msg+'\n')
         self.Show()
@@ -330,7 +334,7 @@ class MyFrame(wx.Frame):
                         self.MainInput.SetValue('')
         except :
                 self.MainInput.SetValue('')
-                self.Show()
+        self.Show()
 
 
         event.EventObject.Navigate()
@@ -386,6 +390,26 @@ class MyFrame(wx.Frame):
             self.Show()
 
             #self.ia.RunCmd(cmd)
+    def HighLight(self):
+        txt = str(self.MainOutput.GetValue())
+        lp = len(txt)
+        if lp>self.OutputIndex:
+            txt = txt[self.OutputIndex:lp]
+            lines = txt.split('\n')
+            lens = self.OutputIndex
+            for line in lines:
+                lenofline =len(line)
+                if line.lower().find('err')!=-1or line.lower().find('fail')!=-1:
+                    self.MainOutput.SetStyle(lens, lens+lenofline, wx.TextAttr("red", "blue"))
+                else:
+                    self.MainOutput.SetStyle(lens, lens+lenofline, wx.TextAttr("black", "white"))
+                lens = lens+len(line)+1
+            self.OutputIndex = lp
+
+
+    def Show(self, *args, **kwargs):
+        self.HighLight()
+        super(MyFrame, self).Show()
     def ManualRun(self):
         import time
         suts={}
@@ -446,12 +470,11 @@ class MyFrame(wx.Frame):
             try:
                 while self.ia.tc.IsAlive():
                     try:
-                        self.MainOutput.SetStyle(1, 5, wx.TextAttr("red", "blue"))
                         self.Show()
                         time.sleep(.1)
                     except Exception as e:
                         msg = traceback.format_exc()
-                        self.info(msg)
+                        print(msg)
                         self.info(msg)
             except:
                 pass
