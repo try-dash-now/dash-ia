@@ -230,6 +230,9 @@ class Case(object):
         self.UpdateSutOutput2RecordReplay('__case__', msg)
         
     def __init__(self,name,suts,steps=None,mode=None,DebugWhenFailed=False,logdir=None,caseconfigfile=None):
+        """
+        init a Test Case instance
+        """
         self.Name= 'DefaultTestCaseName'
         self.SUTs={}
         self.Session={}
@@ -323,10 +326,6 @@ class Case(object):
                 self.info(traceback.format_exc())
                 raise Exception('Can NOT connected to %s'%sut)
             self.info('connected to  to %s'%(sut))
-
-
-        
-
         self.InitialDone=True
 
         #print(self.thInteraction)
@@ -396,6 +395,7 @@ class Case(object):
         self.info('Start Step:sut(%s), action(%s), expect(%s) within %f'%(step[0],step[1],step[2],float(step[3])))
         [sut,cmd,exp,Time]=step[:4]
         [fretry,fNoAction,fNo,fNoWait]=[1,False,False,False]
+
         mRetry=re.match(reRetry, cmd)
         mCtrl= re.match(reCtrl,cmd)
         mAlt = re.match(reAlt,cmd)

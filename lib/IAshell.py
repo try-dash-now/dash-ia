@@ -3,10 +3,7 @@ __author__ = 'Sean Yu'
 import telnetlib
 import WinSession # for py2exe bin distribution
 import traceback
-from Case import Case
 import sys,os
-print(sys.path)
-
 import threading
 
 from Case import Case
@@ -43,6 +40,7 @@ class IAshell(Cmd, object):
     MoreHistory= False
     cmdbank = None
 
+    helpDoc=None
     def h(self):
         return self.history()
     def history(self):
@@ -177,6 +175,42 @@ class IAshell(Cmd, object):
         #readline.set_completer_delims('\t\n')
     #     def do_set(self,name):
     #         print(name)
+        self.helpDoc={}
+    def CreateDoc4Sut(self, sutname=None):
+        if not sutname:
+            self.sutname =sutname
+        if  self.helpDoc.has_key(self.sutname):
+            return
+        members =dir(self.tc.Session[self.sutname])
+        self.helpDoc.update({self.sutname:{}})
+        for m in sorted(members):
+            if m.startswith('__'):
+                pass
+            else:
+                import inspect
+                try:
+                    fundef = inspect.getsource(eval('self.tc.Session[self.sutname].%s'%m))
+                    fundefstr = fundef[:fundef.find(':')]
+                    listoffun =fundef.split('\n')
+                    ret = eval('self.tc.Session[self.sutname].%s.__doc__'%m)
+                    if ret:
+                        fundefstr = fundefstr +'\n\t'+'\n\t'.join(ret.split('\n'))
+                    self.helpDoc[self.sutname].update({m: fundefstr})
+                except :
+                    pass
+    def doc(self, functionName=None):
+        if self.sutname not in ['tc' , '__case__']:
+            self.CreateDoc4Sut(self.sutname)
+            for fun in sorted(self.helpDoc[self.sutname].keys()):
+                if functionName:
+                    lowerFunName = fun.lower()
+                    if lowerFunName.find(functionName.lower())!=-1:
+                        print(fun)
+                        print('\t'+self.helpDoc[self.sutname][fun])
+                else:
+                    print(fun)
+                    print('\t'+self.helpDoc[self.sutname][fun])
+
     def do_setmode (self,mode):
         mode = mode.lower()
         if mode in ('cli','fun'):
@@ -229,19 +263,15 @@ class IAshell(Cmd, object):
         #print(self.InteractionOutput,end='')
         return line
     def default(self,line):
-        #print('line: %s======'%line)
         try:
-            #print('@@@line is:%s=='%line)
             if line[-1]=='\t':
                 print("@"*80)
             if self.sutname!='tc':
-
                 if self.tabend!='disable':
                     line+='\t'
 
                 self.RunCmd(line)
-                #i.cmdqueue=[]
-                #time.sleep(.1)
+
         except Exception as e:
             msg = traceback.format_exc()
             print(msg)
@@ -411,6 +441,8 @@ class IAshell(Cmd, object):
     def showme(self,data='hello'):
         print(data)
         return data
-# TODO: Sean, 2015-6-16, Add function allow user check the function description, defines of augurment, alive help, in the interaction RR(Record and Replay) mode
+# Done: Sean, 2015-6-16, Add function allow user check the function description, defines of augurment, alive help, in the interaction RR(Record and Replay) mode
 # TODO: Sean, 2015-6-16, create a py file after Interaction RR (Record and Replay) mode--for debug in python IDE easier
+# todo: Sean, 2015-6-16, run a existing csv case, or part of the case
+
 

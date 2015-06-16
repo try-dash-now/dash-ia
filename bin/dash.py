@@ -271,6 +271,7 @@ class MyFrame(wx.Frame):
                     self.ia.postloop()
 
                     self.MainInput.SetValue('')
+                    self.MainOutput.AppendText('\n'+self.ia.prompt)
                     self.Show()
                 else:
                     self.ManualCaseHistoryCmd.append(line)

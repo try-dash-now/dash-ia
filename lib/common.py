@@ -97,6 +97,8 @@ class baseSession(object):
     def StartInteractionMode(self,flag):
 
         self.fInteractionMode=flag
+    def  SendLine(self,command, clearbuffer=True,AntiIdle=False,Ctrl=False,Alt=False):
+        pass
 
 def bench2dict(csvfile, delimiter='='):
     reComment = re.compile('\s*#', re.I)
