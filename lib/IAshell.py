@@ -232,9 +232,14 @@ class IAshell(Cmd, object):
                         fundefstr = fundefstr +'\n\t'+'\n\t'.join(ret.split('\n'))
                     self.helpDoc[self.sutname].update({m: fundefstr})
                 except :
+                    print(traceback.format_exc())
+                    print(self.sutname])
+                    print(self.tc.Session[self.sutname])
+                    print(self.tc.Session[self.sutname])
                     pass
     def doc(self, functionName=None):
         print('SUT:%s\n'%self.sutname)
+
         if self.sutname not in ['tc' , '__case__']:
             self.CreateDoc4Sut(self.sutname)
             for fun in sorted(self.helpDoc[self.sutname].keys()):
