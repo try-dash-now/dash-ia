@@ -323,7 +323,9 @@ class Case(object):
                 self.Session.update({sut:self.Connect2Sut(sut)})
             except Exception as e:
                 import traceback
-                self.info(traceback.format_exc())
+                msg = traceback.format_exc()
+                print(msg)
+                self.info(msg)
                 raise Exception('Can NOT connected to %s'%sut)
             self.info('connected to  to %s'%(sut))
         self.InitialDone=True

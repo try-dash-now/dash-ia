@@ -1,2 +1,6 @@
 #todo: Sean, 2015-6-16, in executable distribute, can add new python file directly? need to check
+#todo: Sean, 2015-6-17, keyboard up/down should browse the real command, which is executed by case
+#todo: Sean, 2015-6-17, can launch web session in dash.exe
+    #http://stackoverflow.com/questions/27237461/export-python-to-exe-with-py2exe-selenium-error
+    #http://stackoverflow.com/questions/20985627/py2exe-isnt-copying-webdriver-prefs-json-into-builds
 

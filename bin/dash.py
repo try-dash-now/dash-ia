@@ -84,6 +84,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
+        self.Bind(wx.EVT_TEXT, self.OnMainOutputChanged, self.MainOutput)
         self.Bind(wx.EVT_MENU, self.OnRunHTTPServer, menuLaunchHttp)
         #self.Bind(wx.EVT_BUTTON , self.OnRunScript, self.buttons[1])
         self.MainInput.Bind(wx.EVT_KEY_DOWN, self.onEnter)
@@ -100,8 +101,9 @@ class MyFrame(wx.Frame):
         sys.stdout = self.MainOutput
         self.Maximize(True)
         self.OutputIndex = len(self.MainOutput.GetValue())
-        font = wx.Font(12, wx.ROMAN,   wx.SLANT, wx.BOLD)
+        font = wx.Font(12, wx.ROMAN,   wx.ITALIC, wx.LIGHT)
         self.MainOutput.SetFont(font)
+        font = wx.Font(12, wx.ROMAN,   wx.ITALIC, wx.BOLD)
         self.MainInput.SetFont(font)
     def info(self, msg):
         self.MainOutput.AppendText(msg+'\n')
@@ -120,6 +122,8 @@ class MyFrame(wx.Frame):
         dlg = wx.MessageDialog(self, txt, "About DasH", wx.OK)
         dlg.ShowModal() # Shows it
         dlg.Destroy() # finally destroy it when finished.
+    def OnMainOutputChanged(self, e):
+        self.HighLight()
     def OnClose(self,e): #fix: RuntimeError: maximum recursion depth exceeded while calling a Python object
         self.Hide()
         if self.bIARunning or self.IAThread:
@@ -399,8 +403,9 @@ class MyFrame(wx.Frame):
             lens = self.OutputIndex
             for line in lines:
                 lenofline =len(line)
-                if line.lower().find('err')!=-1or line.lower().find('fail')!=-1:
-                    self.MainOutput.SetStyle(lens, lens+lenofline, wx.TextAttr("red", "blue"))
+                lowerLine = line.lower()
+                if lowerLine.find('err')!=-1 or lowerLine.find('fail')!=-1 or lowerLine.find('exception')!=-1:
+                    self.MainOutput.SetStyle(lens, lens+lenofline, wx.TextAttr("red", "yellow"))
                 else:
                     self.MainOutput.SetStyle(lens, lens+lenofline, wx.TextAttr("black", "white"))
                 lens = lens+len(line)+1

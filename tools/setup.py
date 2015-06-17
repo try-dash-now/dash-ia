@@ -9,7 +9,12 @@ pardir =os.path.dirname(os.path.realpath(__file__))
 pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
 sys.path.append(os.path.sep.join([pardir,'lib']))
 print('\n'.join(sys.path))
-
+import selenium
+import webbrowser
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
+from WebSession import WebSession
 
 
 from distutils.core import setup
@@ -26,10 +31,11 @@ dist = setup(
     data_files= ['../bin/manualrun.cfg',
                    '../bin/run.cfg',
                    '../LICENSE.TXT',
-                   ( 'bench',['../bench/local']),
+                   ( 'bench',['../bench/local.csv']),
 
                    ('case', []),
-                   ('case', ['../case/case1.csv']),
+                   ('case', ['../case/case1.csv', '../case/slv.csv']),
+                   #('case', ['../case/case1.csv']),
                    ( 'case/manual', []),
                    ('suite', []),
                    ('suite', ['../suite/suite1.csv']),
