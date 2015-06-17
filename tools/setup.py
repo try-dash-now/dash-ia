@@ -152,6 +152,14 @@ for op in sys.argv:
 
 import shutil
 targetDir = os.sep.join([folder, 'bin'])
+excludedFolder =['bin',
+                 'log',
+                 'database',
+                 'report',
+                 'lib',
+                 'bench',
+                 'case',
+                 ]
 for file in os.listdir(folder):
     sourceFile = os.path.join(folder,  file)
     targetFile = os.path.join(targetDir,  file)
@@ -160,11 +168,14 @@ for file in os.listdir(folder):
         continue
     if os.path.isfile(sourceFile):
         try:
-            #open(targetFile, "wb").write(open(sourceFile, "rb").read())
-            #os.remove(sourceFile)
+            open(targetFile, "wb").write(open(sourceFile, "rb").read())
+            os.remove(sourceFile)
             pass
         except:
             pass
+    elif os.path.isdir(sourceFile) and os.path.basename(sourceFile) not in excludedFolder:
+        shutil.copytree(sourceFile, targetFile)
+        shutil.rmtree(sourceFile)
 
 
 
