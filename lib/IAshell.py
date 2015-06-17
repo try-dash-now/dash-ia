@@ -235,7 +235,7 @@ class IAshell(Cmd, object):
                     print(traceback.format_exc())
                     print(self.sutname])
                     print(self.tc.Session[self.sutname])
-                    print(self.tc.Session[self.sutname])
+                    print(m)
                     pass
     def doc(self, functionName=None):
         print('SUT:%s\n'%self.sutname)
