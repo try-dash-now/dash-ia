@@ -16,6 +16,77 @@ from selenium.webdriver.support.ui import Select
 # from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
 # from selenium.webdriver.support import expected_conditions as EC
 from common import baseSession
+
+firefoxprofile = {
+
+  "frozen": {
+    "app.update.auto": False,
+    "app.update.enabled": False,
+    "browser.download.manager.showWhenStarting": False,
+    "browser.EULA.override": True,
+    "browser.EULA.3.accepted": True,
+    "browser.link.open_external": 2,
+    "browser.link.open_newwindow": 2,
+    "browser.offline": False,
+    "browser.safebrowsing.enabled": False,
+    "browser.safebrowsing.malware.enabled": False,
+    "browser.search.update": False,
+    "browser.sessionstore.resume_from_crash": False,
+    "browser.shell.checkDefaultBrowser": False,
+    "browser.tabs.warnOnClose": False,
+    "browser.tabs.warnOnOpen": False,
+    "datareporting.healthreport.service.enabled": False,
+    "datareporting.healthreport.uploadEnabled": False,
+    "datareporting.healthreport.service.firstRun": False,
+    "datareporting.healthreport.logging.consoleEnabled": False,
+    "datareporting.policy.dataSubmissionEnabled": False,
+    "datareporting.policy.dataSubmissionPolicyAccepted": False,
+    "devtools.errorconsole.enabled": True,
+    "dom.disable_open_during_load": False,
+    "extensions.autoDisableScopes": 10,
+    "extensions.blocklist.enabled": False,
+    "extensions.logging.enabled": True,
+    "extensions.update.enabled": False,
+    "extensions.update.notifyUser": False,
+    "network.manage-offline-status": False,
+    "network.http.phishy-userpass-length": 255,
+    "offline-apps.allow_by_default": True,
+    "prompts.tab_modal.enabled": False,
+    "security.csp.enable": False,
+    "security.fileuri.origin_policy": 3,
+    "security.fileuri.strict_origin_policy": False,
+    "security.warn_entering_secure": False,
+    "security.warn_entering_secure.show_once": False,
+    "security.warn_entering_weak": False,
+    "security.warn_entering_weak.show_once": False,
+    "security.warn_leaving_secure": False,
+    "security.warn_leaving_secure.show_once": False,
+    "security.warn_submit_insecure": False,
+    "security.warn_viewing_mixed": False,
+    "security.warn_viewing_mixed.show_once": False,
+    "signon.rememberSignons": False,
+    "toolkit.networkmanager.disable": True,
+    "toolkit.telemetry.prompted": 2,
+    "toolkit.telemetry.enabled": False,
+    "toolkit.telemetry.rejected": True
+  },
+  "mutable": {
+    "browser.dom.window.dump.enabled": True,
+    "browser.newtab.url": "about:blank",
+    "browser.newtabpage.enabled": False,
+    "browser.startup.page": 0,
+    "browser.startup.homepage": "about:blank",
+    "dom.max_chrome_script_run_time": 30,
+    "dom.max_script_run_time": 30,
+    "dom.report_all_js_exceptions": True,
+    "javascript.options.showInConsole": True,
+    "network.http.max-connections-per-server": 10,
+    "startup.homepage_welcome_url": "about:blank",
+    "webdriver_accept_untrusted_certs": True,
+    "webdriver_assume_untrusted_issuer": True
+  }
+}
+
 class WebSession(baseSession):
     url=None
     webdriver =None
@@ -27,7 +98,27 @@ class WebSession(baseSession):
         baseSession.__init__(self, name,attrs,logger,logpath)
 
         if attrs['BROWSER'].lower() == 'firefox':
-            self.webdriver = webdriver.Firefox()
+            import json
+            webdriver.FirefoxProfile.DEFAULT_PREFERENCES= firefoxprofile
+            profile = webdriver.FirefoxProfile()
+
+            xpi = '../lib/webdriver.xpi'
+            xpipath = '../lib/'
+            if not os.path.exists(xpi):
+                if os.path.exists('./lib/webdriver.xpi'):
+                    xpipath = './lib/'
+                    xpi='./lib/webdriver.xpi'
+                else:
+                    xpipath='./'
+                    xpi =''
+
+            from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+            #binary = FirefoxBinary('C:/Program Files (x86)/Mozilla Firefox/firefox.exe')
+            #profile.add_extension(xpi)
+
+            self.webdriver = webdriver.Firefox()#firefox_profile =profile)# ,firefox_binary=binary)
+
+
         elif attrs['BROWSER'].lower() == 'chrome':
             self.webdriver = webdriver.Chrome()
         elif attrs['BROWSER'].lower() == 'chrome':
