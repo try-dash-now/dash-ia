@@ -217,6 +217,7 @@ class IAshell(Cmd, object):
         if  self.helpDoc.has_key(self.sutname):
             return
         members =dir(self.tc.Session[self.sutname])
+
         self.helpDoc.update({self.sutname:{}})
         for m in sorted(members):
             if m.startswith('__'):
@@ -224,8 +225,13 @@ class IAshell(Cmd, object):
             else:
                 import inspect
                 try:
-                    fundef = inspect.getsource(eval('self.tc.Session[self.sutname].%s'%m))
-                    fundefstr = fundef[:fundef.find(':')]
+                    self.CreateDoc4Sut
+                    try:
+                        fundef = inspect.getsource(eval('self.tc.Session[self.sutname].%s'%m)) # recreate function define for binary distribute
+                        fundefstr = fundef[:fundef.find(':')]
+                    except:
+                        fundefstr =('%s(%s)'%(m, ', '.join(['arg1=abc','arg2=222'])))
+                        fundef =fundefstr
                     listoffun =fundef.split('\n')
                     ret = eval('self.tc.Session[self.sutname].%s.__doc__'%m)
                     if ret:
@@ -233,7 +239,7 @@ class IAshell(Cmd, object):
                     self.helpDoc[self.sutname].update({m: fundefstr})
                 except :
                     print(traceback.format_exc())
-                    print(self.sutname])
+                    print(self.sutname)
                     print(self.tc.Session[self.sutname])
                     print(m)
                     pass
