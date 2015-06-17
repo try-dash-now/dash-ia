@@ -234,6 +234,7 @@ class IAshell(Cmd, object):
                 except :
                     pass
     def doc(self, functionName=None):
+        print('SUT:%s\n'%self.sutname)
         if self.sutname not in ['tc' , '__case__']:
             self.CreateDoc4Sut(self.sutname)
             for fun in sorted(self.helpDoc[self.sutname].keys()):

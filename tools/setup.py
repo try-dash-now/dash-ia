@@ -174,6 +174,10 @@ for file in os.listdir(folder):
         except:
             pass
     elif os.path.isdir(sourceFile) and os.path.basename(sourceFile) not in excludedFolder:
+        try:
+            shutil.rmtree(targetFile)
+        except:
+            pass
         shutil.copytree(sourceFile, targetFile)
         shutil.rmtree(sourceFile)
 
