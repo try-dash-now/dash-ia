@@ -111,6 +111,7 @@ try:
                        ( 'lib/html', ['../lib/html/dash.ico']),
                         ( 'log/manual', []),
                        ('selenium', []),
+                       ('product', ['../product/Cisco.py']),
                       # ('selenium/webdriver/firefox', ['%s\\firefox\\webdriver.xpi'%(wd_base), '%s\\firefox\\webdriver_prefs.json'%(wd_base)]),
                        #('.', ['../tools/webdriver.xpi', '../tools/webdriver_prefs.json']),
                        ],
@@ -160,6 +161,7 @@ excludedFolder =['bin',
                  'bench',
                  'case',
                  'suite',
+                 'product',
                  ]
 for file in os.listdir(folder):
     sourceFile = os.path.join(folder,  file)
