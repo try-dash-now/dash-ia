@@ -1,4 +1,1 @@
 t.py feature.csv local case2 full,abort,try 2
-t.py feature.csv local case3 full bbbb,,try 2
-t.py feature.csv local case3 full ccc,abort,try 2
-t.py feature.csv local case3 full bbbb,, try 2

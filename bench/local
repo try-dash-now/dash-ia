@@ -3,3 +3,4 @@ d2,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP
 l,TIMEOUT=10,"LOGIN=syu,assword:,10\nyxw123,~],20",CMD=telnet cdc-dash,SUT=,EXP=login:,,
 m2960-2,CMD=telnet 10.245.66.16,EXP=#,WAIT=5,SUT=Cisco,"LOGIN=enable,Password:,23\nadmin,#,20",TIMEOUT=5,
 t2960-2,CMD=telnet 10.245.66.15,EXP=#,WAIT=180,SUT=Cisco,"LOGIN=enable,Password:,23\nadmin,#,20",TIMEOUT=5,
+web,SUT=WebSession,BROWSER=,CMD=,

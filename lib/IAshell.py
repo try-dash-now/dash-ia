@@ -217,6 +217,7 @@ class IAshell(Cmd, object):
         if  self.helpDoc.has_key(self.sutname):
             return
         members =dir(self.tc.Session[self.sutname])
+
         self.helpDoc.update({self.sutname:{}})
         for m in sorted(members):
             if m.startswith('__'):
@@ -224,16 +225,45 @@ class IAshell(Cmd, object):
             else:
                 import inspect
                 try:
-                    fundef = inspect.getsource(eval('self.tc.Session[self.sutname].%s'%m))
-                    fundefstr = fundef[:fundef.find(':')]
+                    self.CreateDoc4Sut
+                    try:
+                        fundef = inspect.getsource(eval('self.tc.Session[self.sutname].%s'%m)) # recreate function define for binary distribute
+                        fundefstr = fundef[:fundef.find(':')]
+                    except:
+                        (args, varargs, keywords, defaults) =inspect.getargspec(eval('self.tc.Session[self.sutname].%s'%m))
+                        argstring = ''
+                        largs=len(args)
+                        ldefaults= len(defaults)
+                        gaplen = largs-ldefaults
+                        index =0
+
+                        for  arg in args:
+                            if index <gaplen:
+                                argstring+='%s, '%arg
+                            else:
+                                defvalue = defaults[index-gaplen]
+                                if type('')==type(defvalue):
+                                    defvalue = '"%s"'%defvalue
+                                argstring+='%s = %s, '%(arg,str(defvalue))
+                            index+=1
+
+
+                        fundefstr ='%s( %s )'%(m, argstring)
+                        fundef =fundefstr
                     listoffun =fundef.split('\n')
                     ret = eval('self.tc.Session[self.sutname].%s.__doc__'%m)
                     if ret:
                         fundefstr = fundefstr +'\n\t'+'\n\t'.join(ret.split('\n'))
                     self.helpDoc[self.sutname].update({m: fundefstr})
                 except :
+                    #print(traceback.format_exc())
+                    #print(self.sutname)
+                    #print(self.tc.Session[self.sutname])
+                    #print(m)
                     pass
     def doc(self, functionName=None):
+        print('SUT:%s\n'%self.sutname)
+
         if self.sutname not in ['tc' , '__case__']:
             self.CreateDoc4Sut(self.sutname)
             for fun in sorted(self.helpDoc[self.sutname].keys()):

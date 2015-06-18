@@ -52,7 +52,7 @@ class MediaCollector(build_exe):
         # Copy the media files to the collection dir.
         # Also add the copied file to the list of compiled
         # files so it will be included in zipfile.
-        files = [ '''C:\\Python27\\Lib\\site-packages\\selenium\\webdriver\\firefox\\webdriver.xpi''',
+        files = [ '''C:/Python27/Lib/site-packages/selenium-2.46.0-py2.7.egg/selenium/webdriver/firefox/webdriver.xpi''',
                  # '''C:\\Python27\\Lib\\site-packages\\selenium\\webdriver\\firefox\\webdriver_prefs.json'''
                  ]
         for f in files :#glob.glob('tools/'):
@@ -76,64 +76,67 @@ py2exe_options = {
         # [...] Other py2exe options here.
     }
 
-wd_base = 'C:\\Python27\\Lib\\site-packages\\selenium\\webdriver'
+wd_base = 'C:/Python27/Lib/site-packages/selenium-2.46.0-py2.7.egg/selenium/webdriver/'
 RequiredDataFailes = [
     ('selenium/webdriver/firefox', ['%s\\firefox\\webdriver.xpi'%(wd_base), '%s\\firefox\\webdriver_prefs.json'%(wd_base)])
 ]
-dist = setup(
+try:
+    dist = setup(
 
-    console=["../bin/ia.py",
-                      "../bin/runTask.py",
-                      "../bin/runWebServer.py",
-                      "../bin/t.py",
-                      "../bin/web.py",
-                      ],
-    windows = ['../bin/dash.py'],
-    data_files= [  '../bin/manualrun.cfg',
-                   '../bin/run.cfg',
-                   '../LICENSE.TXT',
-                   ( 'bench',['../bench/local.csv']),
+        console=["../bin/ia.py",
+                          "../bin/runTask.py",
+                          "../bin/runWebServer.py",
+                          "../bin/t.py",
+                          "../bin/web.py",
+                          ],
+        windows = ['../bin/dash.py'],
+        data_files= [  '../bin/manualrun.cfg',
+                       '../bin/run.cfg',
+                       '../LICENSE.TXT',
+                       ( 'bench',['../bench/local.csv']),
 
-                   ('case', []),
-                   ('case', ['../case/case1.csv', '../case/slv.csv']),
-                   #('case', ['../case/case1.csv']),
-                   ( 'case/manual', []),
-                   ('suite', []),
-                   ('suite', ['../suite/suite1.csv']),
-                   ('report', []),
-                   ('database',[]),
-                   ('log',[]),
-                   ('bin',[]),
-                   ('lib',['../lib/case.cfg']),
-                   ( 'lib/html', []),
-                   ( 'lib/html', ['../lib/html/index.html']),
-                   ( 'lib/html', ['../lib/html/dash.ico']),
-                    ( 'log/manual', []),
-                   ('selenium', []),
-                   ('selenium/webdriver/firefox', ['%s\\firefox\\webdriver.xpi'%(wd_base), '%s\\firefox\\webdriver_prefs.json'%(wd_base)]),
-                   #('.', ['../tools/webdriver.xpi', '../tools/webdriver_prefs.json']),
-                   ],
-    options = {"py2exe":
-                   {
-                      "unbuffered": True,
+                       ('case', []),
+                       ('case', ['../case/case1.csv', '../case/slv.csv']),
+                       #('case', ['../case/case1.csv']),
+                       ( 'case/manual', []),
+                       ('suite', []),
+                       ('suite', ['../suite/suite1.csv']),
+                       ('report', []),
+                       ('database',[]),
+                       ('log',[]),
+                       ('bin',[]),
+                       ('lib',['../lib/case.cfg']),
+                       ( 'lib/html', []),
+                       ( 'lib/html', ['../lib/html/index.html']),
+                       ( 'lib/html', ['../lib/html/dash.ico']),
+                        ( 'log/manual', []),
+                       ('selenium', []),
+                      # ('selenium/webdriver/firefox', ['%s\\firefox\\webdriver.xpi'%(wd_base), '%s\\firefox\\webdriver_prefs.json'%(wd_base)]),
+                       #('.', ['../tools/webdriver.xpi', '../tools/webdriver_prefs.json']),
+                       ],
+        options = {"py2exe":
+                       {
+                          "unbuffered": True,
 
-                      #"compressed": 2,
-                      "optimize": 2,
-                      "includes":[],# includes,
-                      "excludes":[],# excludes,
-                      "packages": [],#packages,
-                      "dll_excludes": dll_excludes,
-                      #"bundle_files": 1,
-                      "dist_dir": "dist",
-                      "xref": False,
-                      "skip_archive": True,
-                      "ascii": False,
-                      "custom_boot_script": '',
-                    }
-               },
-    #**py2exe_options
-)
-
+                          #"compressed": 2,
+                          "optimize": 2,
+                          "includes":[],# includes,
+                          "excludes":[],# excludes,
+                          "packages": [],#packages,
+                          "dll_excludes": dll_excludes,
+                          #"bundle_files": 1,
+                          "dist_dir": "dist",
+                          "xref": False,
+                          "skip_archive": True,
+                          "ascii": False,
+                          "custom_boot_script": '',
+                        }
+                   },
+        **py2exe_options
+    )
+except:
+    import traceback
+    print(traceback.format_exc())
 
 
 folder = './dist'
@@ -149,6 +152,14 @@ for op in sys.argv:
 
 import shutil
 targetDir = os.sep.join([folder, 'bin'])
+excludedFolder =['bin',
+                 'log',
+                 'database',
+                 'report',
+                 'lib',
+                 'bench',
+                 'case',
+                 ]
 for file in os.listdir(folder):
     sourceFile = os.path.join(folder,  file)
     targetFile = os.path.join(targetDir,  file)
@@ -157,11 +168,18 @@ for file in os.listdir(folder):
         continue
     if os.path.isfile(sourceFile):
         try:
-            #open(targetFile, "wb").write(open(sourceFile, "rb").read())
-            #os.remove(sourceFile)
+            open(targetFile, "wb").write(open(sourceFile, "rb").read())
+            os.remove(sourceFile)
             pass
         except:
             pass
+    elif os.path.isdir(sourceFile) and os.path.basename(sourceFile) not in excludedFolder:
+        try:
+            shutil.rmtree(targetFile)
+        except:
+            pass
+        shutil.copytree(sourceFile, targetFile)
+        shutil.rmtree(sourceFile)
 
 
 
