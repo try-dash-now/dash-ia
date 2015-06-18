@@ -159,6 +159,7 @@ excludedFolder =['bin',
                  'lib',
                  'bench',
                  'case',
+                 'suite',
                  ]
 for file in os.listdir(folder):
     sourceFile = os.path.join(folder,  file)
