@@ -131,7 +131,7 @@ dist = setup(
                       "custom_boot_script": '',
                     }
                },
-    **py2exe_options
+    #**py2exe_options
 )
 
 
