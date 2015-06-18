@@ -71,7 +71,7 @@ logdir--the log dir ,default is ../html/log/tmp''')
         TestCase = Case(name=name, suts=sut, steps=steps,mode=mode, logdir=sys.argv[-1], DebugWhenFailed=False, caseconfigfile=runcfgfile)
         TestCase.RunCase(mode, 'setup.1', 'teardown.-1')
         try:
-            TestCase.EndCase(True,True)
+            TestCase.EndCase(True,False)
         except:
             pass
 
@@ -84,7 +84,7 @@ logdir--the log dir ,default is ../html/log/tmp''')
         print(e)
         print ("!!!!!!!!!!!!!!!!!!!!!!!! CASE FAIL !!!!!!!!!!!!!!!!!!!!!!!!")
         try:
-            TestCase.EndCase(True,True)
+            TestCase.EndCase(True,False)
         except:
             pass
         os._exit(1)
