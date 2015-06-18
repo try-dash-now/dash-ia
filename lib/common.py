@@ -101,7 +101,22 @@ class baseSession(object):
         pass
     def Expect(self,pat , wait=2, nowait=False):
         pass
+    def EndSession(self):
+        command = self.attrs['CMD']
+        output =self.expect(['.*'], 1)
 
+        if command.find('telnet')!=-1:
+            self.write('\x1d')
+            output= self.expect(['telnet>'],10)
+            self.write('quit')
+            output= self.expect(['.*'],10)
+        else:
+            try:
+                self.write('exit')
+                if self.attrs.get('LINEEND'):
+                    self.write(self.attrs.get('LINEEND'))
+            except Exception as e:
+                self.error(str(e))
 def bench2dict(csvfile, delimiter='='):
     reComment = re.compile('\s*#', re.I)
     

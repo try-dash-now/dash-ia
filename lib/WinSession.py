@@ -113,22 +113,7 @@ class WinSession(spawn, baseSession):
                 msg += 'send(%s), expect(%s), within(%s)'%(step[0],step[1],str(step[2]))
                 print(msg)
                 raise Exception(msg)
-    def EndSession(self):
-        command = self.attrs['CMD']
-        output =self.expect(['.*'], 1)
 
-        if command.find('telnet')!=-1:
-            self.write('\x1d')
-            output= self.expect(['telnet>'],10)
-            self.write('quit')
-            output= self.expect(['.*'],10)
-        else:
-            try:
-                self.write('exit')
-                if self.attrs.get('LINEEND'):
-                    self.write(self.attrs.get('LINEEND'))
-            except Exception as e:
-                self.error(str(e))
     def msg(self, msg, *args):
         super(WinSession, self).msg(msg,*args)
         if msg.find('recv')!=-1:

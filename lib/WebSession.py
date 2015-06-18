@@ -123,6 +123,8 @@ class WebSession(baseSession):
             self.webdriver = webdriver.Chrome()
         elif attrs['BROWSER'].lower() == 'chrome':
             self.webdriver = webdriver.Ie()
+    def EndSession(self):
+        self.webdriver.quit()
 
     def CheckUrl(self,url):
         if not self.url:
