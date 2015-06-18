@@ -4,3 +4,7 @@
     #http://stackoverflow.com/questions/27237461/export-python-to-exe-with-py2exe-selenium-error
     #http://stackoverflow.com/questions/20985627/py2exe-isnt-copying-webdriver-prefs-json-into-builds
 
+#todo: Sean, 2015-6-18, issue: no percentage for Pass/Fail/NotRun rate in HTML report
+#todo: Sean, 2015-6-18, issue, web browser should be closed after case ended
+
+#done: sean, 2015-6-18, issue, 'No:' not working in w

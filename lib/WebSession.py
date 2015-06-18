@@ -91,6 +91,12 @@ class WebSession(baseSession):
     url=None
     webdriver =None
     currentElement=None
+    def __del__(self):
+        try:
+            self.webdriver.quit()
+        except:
+            pass
+
     def __init__(self,name,attrs={},logger=None, logpath=None):
         if attrs['BROWSER'].strip()=='':
             attrs['BROWSER']='FireFox'
@@ -117,6 +123,10 @@ class WebSession(baseSession):
             #profile.add_extension(xpi)
 
             self.webdriver = webdriver.Firefox()#firefox_profile =profile)# ,firefox_binary=binary)
+            timeout =30
+            if attrs.has_key('TIMEOUT'):
+                timeout = float(attrs['TIMEOUT'])
+            self.webdriver.set_page_load_timeout(timeout)
 
 
         elif attrs['BROWSER'].lower() == 'chrome':

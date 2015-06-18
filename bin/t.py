@@ -70,6 +70,11 @@ logdir--the log dir ,default is ../html/log/tmp''')
         sut,steps,mode = LoadCaseFromCsv(bench,feature,case, mode, sys.argv)
         TestCase = Case(name=name, suts=sut, steps=steps,mode=mode, logdir=sys.argv[-1], DebugWhenFailed=False, caseconfigfile=runcfgfile)
         TestCase.RunCase(mode, 'setup.1', 'teardown.-1')
+        try:
+            TestCase.EndCase(True,True)
+        except:
+            pass
+
         import time
         print ("======================== CASE PASS ========================")
     except Exception as e:
@@ -78,6 +83,10 @@ logdir--the log dir ,default is ../html/log/tmp''')
         print(msg)
         print(e)
         print ("!!!!!!!!!!!!!!!!!!!!!!!! CASE FAIL !!!!!!!!!!!!!!!!!!!!!!!!")
+        try:
+            TestCase.EndCase(True,True)
+        except:
+            pass
         os._exit(1)
         #exit(1)
 

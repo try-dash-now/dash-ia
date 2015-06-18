@@ -472,16 +472,25 @@ class Case(object):
                     s.SendLine(command = cmd, Ctrl=fCtrl, Alt=fAlt)
             if IgnoreExp:
                 return
+            result=''
             if fNo:
+                foundPattern =False
+
                 try:
-                    s.Expect(exp,Time,fNoWait)
-                    self.error('unexpect(%s) found within %f'% (exp, float(time)))
-                    raise Exception('unexpect(%s) found within %f'% (exp, float(time)))
-                except Exception as e:
+                    result = s.Expect(exp,Time,fNoWait)
+                    foundPattern=True
+                except:
+                    pass
+                if foundPattern:
+                    self.error('unexpect(%s) found within %f'% (exp, float(Time)))
+
+                    raise Exception('unexpect(%s) found within %f'% (exp, float(Time)))
+                else:
                     self.info('no unexpected pattern (%s) found'%exp)
             else:
-                s.Expect(exp,Time,fNoWait)
+                result = s.Expect(exp,Time,fNoWait)
                 #print('Expect (%s) found!'%(exp))
+            print(result)
 
 
         
