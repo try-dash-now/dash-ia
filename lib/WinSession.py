@@ -159,7 +159,8 @@ class WinSession(spawn, baseSession):
                 self.InteractionBuffer=''
             else:
                 pat = sre.compile('.+',sre.MULTILINE|sre.DOTALL)
-                output =self.expect([pat], 0.1)[2]
+                self.output =self.expect([pat], 0.1)[2]
+
 
         if AntiIdle ==False:
             self.info("%s SENDLINE:(%s)"%(self.sutname,str(command)))
@@ -247,7 +248,9 @@ class WinSession(spawn, baseSession):
         if not m:
             raise Exception('Expect("%s", %f) Failed'%(pat,float(wait)))
         self.match = m.group()#self.output
-        return self.match # self.output
+        print('match pattern: '+self.match)
+        print('output:\n'+self.output)
+        return self.output # self.match #
 
 
 

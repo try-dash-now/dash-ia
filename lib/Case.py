@@ -323,9 +323,7 @@ class Case(object):
                 self.Session.update({sut:self.Connect2Sut(sut)})
             except Exception as e:
                 import traceback
-                msg = traceback.format_exc()
-                print(msg)
-                self.info(msg)
+                self.info(traceback.format_exc())
                 raise Exception('Can NOT connected to %s'%sut)
             self.info('connected to  to %s'%(sut))
         self.InitialDone=True
@@ -446,15 +444,17 @@ class Case(object):
                         s.SendLine(command = cmd, Ctrl=fCtrl, Alt=fAlt)                
                                     
                 try:
-                    s.Expect(exp,Time,fNoWait)
+                    response =s.Expect(exp,Time,fNoWait)
+
                     if not fNo:
                         Failure=False
                         break
-                        
+
                 except Exception as e:
                     if fNo:
                         Failure=False
                         break
+                print()
             except Exception as e:
                 if os.name!='nt':
                     pass#print ('%d/%d failed'%(totalretry-fretry,totalretry), file=sys.stdout)
@@ -493,7 +493,7 @@ class Case(object):
             print(result)
 
 
-        
+
     def ParseCmdInAction(self,cmd):
         IsCallFunction= True
         reFunction = re.compile('\s*FUN\s*:\s*(.+?)\s*\(\s*(.*)\s*\)|\s*(.+?)\s*\(\s*(.*)\s*\)',re.IGNORECASE)
@@ -509,7 +509,7 @@ class Case(object):
                 arg = m.group(2)
             else:
                 fun = m.group(3)
-                arg = m.group(4)        
+                arg = m.group(4)
 
             fun = self.__getattribute__(fun)
             import inspect
@@ -527,10 +527,10 @@ class Case(object):
                     self.argvs =[self.argvs]
 
             arg =self.argvs
-            kwarg = self.kwargvs          
+            kwarg = self.kwargvs
         else:
             IsCallFunction = False
-            fun = cmd      
+            fun = cmd
         return (IsCallFunction,fun,arg,kwarg)
 
     def GetFunArgs(self,*argvs, **kwargs):
@@ -540,11 +540,11 @@ class Case(object):
         for arg in argvs:
             self.argvs.append(arg)
         for k in kwargs.keys():
-            self.kwargvs.update({k:kwargs[k]})    
+            self.kwargvs.update({k:kwargs[k]})
     def CallFun(self,functionName,args=[], kwargs={}):
-        
+
         self.fActionInProgress=True
-        resp = functionName(*args, **kwargs)  
+        resp = functionName(*args, **kwargs)
         #self.info(resp)
         self.fActionInProgress=False
         # noinspection PyComparisonWithNone

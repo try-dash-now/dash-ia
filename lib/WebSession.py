@@ -123,7 +123,7 @@ class WebSession(baseSession):
             #profile.add_extension(xpi)
 
             self.webdriver = webdriver.Firefox()#firefox_profile =profile)# ,firefox_binary=binary)
-            timeout =30
+            timeout =90 #30s seem too short
             if attrs.has_key('TIMEOUT'):
                 timeout = float(attrs['TIMEOUT'])
             self.webdriver.set_page_load_timeout(timeout)
