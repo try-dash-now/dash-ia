@@ -263,16 +263,10 @@ class CCSV2Case(object):
         self.reTeardown  = sre.compile("^[\s]*#[\s]*TEARDOWN[\s]*",sre.I)
         self.reOnFail    = sre.compile("^[\s]*#[\s]*ONFAIL[\s]*",sre.I)
         self.reComment    = sre.compile("^[\s]*#[\s]*[\S]*",sre.I)
-        Debug= False
-        self.Var =[]
-        self.Setup = []
-        self.Run = []
-        self.Teardown=[]
-        self.OnFail =[]
+
         self.FileName =""
         self.CaseName =""
         self.lastSUT = ""
-        self.ARGV=[]
         self.VAR =[]
         self.sut={}
         self.Var = []
