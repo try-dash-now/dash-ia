@@ -117,6 +117,8 @@ class WinSession(spawn, baseSession):
     def msg(self, msg, *args):
         super(WinSession, self).msg(msg,*args)
         if msg.find('recv')!=-1:
+            if self.fInteractionMode:
+                self.AppendData2InteractionBuffer(args[0])
             self.output+=args[0]
             self.seslog.write(args[0])
             #print(args[0])
@@ -248,8 +250,10 @@ class WinSession(spawn, baseSession):
         if not m:
             raise Exception('Expect("%s", %f) Failed'%(pat,float(wait)))
         self.match = m.group()#self.output
-        print('match pattern: '+self.match)
-        print('output:\n'+self.output)
+        #print('match pattern: ')
+        #print(self.match)
+        #print('output:\n')
+        #print(str(self.output))
         return self.output # self.match #
 
 

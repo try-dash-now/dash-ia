@@ -9,6 +9,9 @@ import sys
 libpath = os.path.sep.join([os.path.dirname(os.getcwd()),'lib'])
 if libpath not in sys.path:
     sys.path.insert(0,libpath)
+libpath = os.path.sep.join([os.path.dirname(os.getcwd()),'product'])
+if libpath not in sys.path:
+    sys.path.insert(0,libpath)
 #from WebSession import WebSession
 from common import DumpStack
 import threading
@@ -180,7 +183,8 @@ class Case(object):
                             continue
                         if os.name =='nt':
                             try:
-                                self.Session[sutname].match =self.Session[sutname].read_until('.+',0.01)#self.Session[sutname].output#
+                                self.Session[sutname].match =self.Session[sutname].InteractionBuffer #read_until('.+',0.01)#self.Session[sutname].output#
+                                self.Session[sutname].InteractionBuffer=''
                             except Exception as e:
                                 self.Session[sutname].match =''
 
@@ -200,7 +204,8 @@ class Case(object):
                         except Exception as e:
                             self.error(DumpStack(e))
                         if len(output)>0:
-                            self.Session[sutname].AppendData2InteractionBuffer(output)
+                            if os.name !='nt':
+                                self.Session[sutname].AppendData2InteractionBuffer(output)
                             self.UpdateSutOutput2RecordReplay(sutname, output)
                             
                             
@@ -454,7 +459,7 @@ class Case(object):
                     if fNo:
                         Failure=False
                         break
-                print()
+
             except Exception as e:
                 if os.name!='nt':
                     pass#print ('%d/%d failed'%(totalretry-fretry,totalretry), file=sys.stdout)
@@ -490,7 +495,7 @@ class Case(object):
             else:
                 result = s.Expect(exp,Time,fNoWait)
                 #print('Expect (%s) found!'%(exp))
-            print(result)
+            #print(result)
 
 
 

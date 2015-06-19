@@ -46,7 +46,7 @@ if __name__ == "__main__":
             sys.argv.append(False)
             sys.argv.append(defaultlogdir)
         else:
-            print ('''format error, example: run.py  feature bench [case mode logdir]
+            print ('''format error, example: t.py  feature bench [case mode logdir]
 case--case name, format is "[casename]"default is the feature file name without extension
 mode--default is full, is one of [full,setup,run,teardown,setuprun,runteardown,setupteardown]
 logdir--the log dir ,default is ../html/log/tmp''')
