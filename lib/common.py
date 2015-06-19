@@ -230,15 +230,15 @@ import re as sre
 import os, shlex
 class CCSV2Case(object):
     Debug= False
-    Var = []
-    Setup = []
-    Run = []
-    Teardown=[]
-    OnFail =[]
-    FileName =""
-    CaseName =""
-    reCaseName  = None #
-    lastSUT = ""
+    Var =None# []
+    Setup =None# []
+    Run = None#[]
+    Teardown=None#[]
+    OnFail =None#[]
+    FileName =None#""
+    CaseName =None#""
+    reCaseName  =None# None #
+    lastSUT = None#""
     reCaseEnd   = None #sre.compile("^[\s]*#[\s]*!---[\s]*",sre.I)
     reVar       = None #sre.compile("^[\s]*#[\s]*VAR[\s]*",sre.I)
     reSetup     = None #sre.compile("^[\s]*#[\s]*SETUP[\s]*",sre.I)
@@ -248,9 +248,9 @@ class CCSV2Case(object):
     LineNumber = 0
     logger =None
     BenchInfo=None
-    ARGV=[]
-    VAR =[]
-    sut={}
+    ARGV=None#[]
+    VAR =None#[]
+    sut=None#{}
     MODE=None
     def __init__(self,benchname='', filename="",casename="",argv=[]):
         self.BenchInfo = bench2dict(benchname)
@@ -263,7 +263,18 @@ class CCSV2Case(object):
         self.reTeardown  = sre.compile("^[\s]*#[\s]*TEARDOWN[\s]*",sre.I)
         self.reOnFail    = sre.compile("^[\s]*#[\s]*ONFAIL[\s]*",sre.I)
         self.reComment    = sre.compile("^[\s]*#[\s]*[\S]*",sre.I)
-
+        Debug= False
+        self.Var =[]
+        self.Setup = []
+        self.Run = []
+        self.Teardown=[]
+        self.OnFail =[]
+        self.FileName =""
+        self.CaseName =""
+        self.lastSUT = ""
+        self.ARGV=[]
+        self.VAR =[]
+        self.sut={}
         self.Var = []
         self.Setup = []
         self.Run = []
@@ -493,8 +504,9 @@ class CCSV2Case(object):
                 self.Setup=[]  
                 self.Teardown=[]   
             elif str(mode).upper() =="TEARDOWN" :
+                self.MODE = "TEARDOWN"
                 self.Run=[]
-                self.Setup=[] 
+                self.Setup =[]
             elif str(mode).upper() =="FULL":
                 self.MODE = "FULL"
             elif str(mode).upper() =="NOTEARDOWN" or str(mode).upper() =="SETUPRUN"  :
