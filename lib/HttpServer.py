@@ -91,6 +91,7 @@ class HttpHandler(BaseHTTPRequestHandler):
     }
         </SCRIPT>
         '''
+
         for name in list:
             fullname = os.path.join(path, name)
             displayname = linkname = name
@@ -121,8 +122,8 @@ class HttpHandler(BaseHTTPRequestHandler):
     def array2htmltable(self,Array):
         content = "<table   border='1' align='left' width=autofit  >"
 
-        for sublist in Array:
-            content += '  <tr><td>\n'
+        for index , sublist in enumerate( Array):
+            content += '  <tr><td>\n%d</td><td>'%(index+1)
             content += '    </td><td>'.join([x if x!='' else '&nbsp;' for x in sublist ])
             content += '  \n</td></tr>\n'
         content += ' \n </table><br>'
