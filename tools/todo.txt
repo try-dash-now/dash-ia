@@ -9,3 +9,6 @@
 
 #done: sean, 2015-6-18, issue, 'No:' not working with 'try xxx:'
 #done: Sean, 2015-6-23, add line index to http web page for suite file case file...
+#todo: Sean, 2015-6-23, it costs a long time to connect SUTs one by one, speed it up
+#todo: Sean, 2015-6-26, no needed empty line (\n\r) used in Recorad and Replay
+#todo: Sean, 2015-6-26, in dash, when call a function, the argument can't be parsed correct, example: WebSession::Click('aaaa', link_text), the first will have quoting marks, the second will have leading space

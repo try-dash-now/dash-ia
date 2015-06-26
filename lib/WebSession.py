@@ -151,7 +151,7 @@ class WebSession(baseSession):
         if not type:
             type ='id'
         else:
-            type= type.lower()
+            type= type.lower().strip()
         element=None
         if type== 'id':
             element= self.webdriver.find_element_by_id(by)
@@ -161,6 +161,9 @@ class WebSession(baseSession):
             element=self.webdriver.find_element_by_name(by)
         elif type == 'link_text':
             element= self.webdriver.find_element_by_link_text(by)
+        elif type == 'tag':
+            element= self.webdriver.find_element_by_tag_name(by)
+
         self.currentElement=element
         return  self.currentElement
     def Send(self,by , keys, type =None, index=None, url=None):
@@ -218,7 +221,7 @@ class WebSession(baseSession):
         if not type:
             type ='id'
         else:
-            type= type.lower()
+            type= type.lower().strip()
         element=None
         if type== 'id':
             element= self.webdriver.find_elements_by_id(by)
@@ -228,6 +231,9 @@ class WebSession(baseSession):
             element=self.webdriver.find_elements_by_name(by)
         elif type == 'link_text':
             element= self.webdriver.find_elements_by_link_text(by)
+        elif type == 'tag':
+            element= self.webdriver.find_element_by_tag_name(by)
+
         self.currentElement = element[index]
         return self.currentElement
 
