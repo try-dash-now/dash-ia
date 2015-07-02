@@ -360,9 +360,11 @@ class Case(object):
 
         classname = sutattr["SUT"]
         ModuleName = __import__(classname)
-        ClassName = ModuleName.__getattribute__(classname)    
+        ClassName = ModuleName.__getattribute__(classname)
+        print('connecting ... to %s'%sutname)
         ses= ClassName(sutname, sutattr,logger=self.logger ,logpath = self.LogDir)
         self.Session.update({sutname:ses})
+        print('connected to %s'%sutname)
         self.info('connected to  to %s'%(sutname))
         return ses
     def EndCase(self, force=False, killProcess=False):
