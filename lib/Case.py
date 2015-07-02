@@ -323,19 +323,23 @@ class Case(object):
         self.RecordReplay.append(newrecord)
         self.RecordReplay.append(before1staction)
 
-
+        thList =[]
         for sut in self.SUTs.keys() :
             if sut =='__case__':
                 continue
             sutstring +='SUT(%s):[%s]\n'%(sut,self.SUTs[sut])
             self.info('connecting to %s'%(sut))
             try:
-                self.Session.update({sut:self.Connect2Sut(sut)})
+                thList.append( threading.Thread(target=self.Connect2Sut,args =[sut]))
+                thList[-1].start()
             except Exception as e:
                 import traceback
                 self.info(traceback.format_exc())
+                print(traceback.format_exc())
                 raise Exception('Can NOT connected to %s'%sut)
-            self.info('connected to  to %s'%(sut))
+        for t in thList:
+            t.join()
+
         self.InitialDone=True
 
         #print(self.thInteraction)
@@ -358,6 +362,8 @@ class Case(object):
         ModuleName = __import__(classname)
         ClassName = ModuleName.__getattribute__(classname)    
         ses= ClassName(sutname, sutattr,logger=self.logger ,logpath = self.LogDir)
+        self.Session.update({sutname:ses})
+        self.info('connected to  to %s'%(sutname))
         return ses
     def EndCase(self, force=False, killProcess=False):
         if self.DebugWhenFailed ==True and self.CaseFailed==True:
