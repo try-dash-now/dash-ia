@@ -177,8 +177,9 @@ class WebSession(baseSession):
             else:
                 element.send_keys(key)
 
-    def get(self, url):
+    def get(self, url, wait=5):
         self.webdriver.get(self.CheckUrl(url))
+        time.sleep(wait)
     def Click(self, by, type =None ,index =None, url=None):
         if index:
             element = self.GetOneFromElements(type,by, index)

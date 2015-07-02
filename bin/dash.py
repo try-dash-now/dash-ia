@@ -468,6 +468,7 @@ class MyFrame(wx.Frame):
         self.bIARunning =True
         try:
             self.ia =IAshell('TC',bench, sutnames,manuallogdir)
+            self.ia.do_tab('disable')
 
 
             print('#'*80)

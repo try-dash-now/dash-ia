@@ -12,3 +12,25 @@
 #todo: Sean, 2015-6-23, it costs a long time to connect SUTs one by one, speed it up
 #todo: Sean, 2015-6-26, no needed empty line (\n\r) used in Recorad and Replay
 #todo: Sean, 2015-6-26, in dash, when call a function, the argument can't be parsed correct, example: WebSession::Click('aaaa', link_text), the first will have quoting marks, the second will have leading space
+#todo: Sean, 2015-6-26, logging Selenium output to websession log file
+#todo: Sean, 2015-6-26, add read/write from/to a file in baseSession, that allow case get/record something in file persistence
+#todo: Sean, 2015-6-30, just keep index, case name, test result in runTask.exe output
+#todo: Sean, 2015-6-30, add colors for runTask.exe output http://stackoverflow.com/questions/2330245/python-change-text-color-in-shell, https://docs.python.org/2/library/curses.html https://www.siafoo.net/snippet/88
+    # 1print '\033[1;30mGray like Ghost\033[1;m'
+    # 2print '\033[1;31mRed like Radish\033[1;m'
+    # 3print '\033[1;32mGreen like Grass\033[1;m'
+    # 4print '\033[1;33mYellow like Yolk\033[1;m'
+    # 5print '\033[1;34mBlue like Blood\033[1;m'
+    # 6print '\033[1;35mMagenta like Mimosa\033[1;m'
+    # 7print '\033[1;36mCyan like Caribbean\033[1;m'
+    # 8print '\033[1;37mWhite like Whipped Cream\033[1;m'
+    # 9print '\033[1;38mCrimson like Chianti\033[1;m'
+    #10print '\033[1;41mHighlighted Red like Radish\033[1;m'
+    #11print '\033[1;42mHighlighted Green like Grass\033[1;m'
+    #12print '\033[1;43mHighlighted Brown like Bear\033[1;m'
+    #13print '\033[1;44mHighlighted Blue like Blood\033[1;m'
+    #14print '\033[1;45mHighlighted Magenta like Mimosa\033[1;m'
+    #15print '\033[1;46mHighlighted Cyan like Caribbean\033[1;m'
+    #16print '\033[1;47mHighlighted Gray like Ghost\033[1;m'
+    #17print '\033[1;48mHighlighted Crimson like Chianti\033[1;m'
+#todo: Sean, 2015-7-2, can't display all output in IAShell or dash

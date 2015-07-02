@@ -183,9 +183,14 @@ class Case(object):
                             continue
                         if os.name =='nt':
                             try:
-                                self.Session[sutname].match =self.Session[sutname].InteractionBuffer #read_until('.+',0.01)#self.Session[sutname].output#
+                                try:
+                                    getdata =self.Session[sutname].read_until('.*',0.01)
+                                except:
+                                    pass
+                                self.Session[sutname].match =self.Session[sutname].InteractionBuffer ##self.Session[sutname].output#
                                 self.Session[sutname].InteractionBuffer=''
                             except Exception as e:
+                                print('error in interaction buffer')
                                 self.Session[sutname].match =''
 
                         else:
