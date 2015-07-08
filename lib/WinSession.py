@@ -13,7 +13,7 @@ import time
 import re as sre
 import traceback
 reSessionClosed =sre.compile ('Connection closed by foreign host',sre.M)
-from common import baseSession
+from baseSession import baseSession
 class WinSession(spawn, baseSession):
     match = None
     attrs={}
@@ -29,7 +29,7 @@ class WinSession(spawn, baseSession):
     #InteractionBuffer=''
     #InteractionMatch=''
     fExpecting=False
-    fSending = False
+
     stdout=None
     def __del__(self):
         if self.seslog:

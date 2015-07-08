@@ -8,13 +8,16 @@ import os,sys
 pardir =os.path.dirname(os.path.realpath(__file__))
 pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
 sys.path.append(os.path.sep.join([pardir,'lib']))
+sys.path.append(os.path.sep.join([pardir,'product']))
 print('\n'.join(sys.path))
+import wx
+import Tkinter
 
 import os
 import glob
 from py2exe.build_exe import py2exe as build_exe
 import zipfile
-
+import Tkinter
 
 def compressFile(infile,outfile):
     import zipfile
@@ -69,8 +72,10 @@ class MediaCollector(build_exe):
 
 from distutils.core import setup
 import py2exe
-dll_excludes = ['libgdk-win32-2.0-0.dll', 'libgobject-2.0-0.dll', 'tcl84.dll',
-                'tk84.dll','MSVCP90.dll']
+dll_excludes = ['libgdk-win32-2.0-0.dll', 'libgobject-2.0-0.dll',
+                #'tcl84.dll',
+                #'tk84.dll',
+                'MSVCP90.dll']
 py2exe_options = {
         'cmdclass': {'py2exe': MediaCollector},
         # [...] Other py2exe options here.
@@ -82,14 +87,15 @@ RequiredDataFailes = [
 ]
 try:
     dist = setup(
-
+        windows = ['../bin/dash.py'],
         console=["../bin/ia.py",
                           "../bin/runTask.py",
                           "../bin/runWebServer.py",
                           "../bin/t.py",
                           "../bin/web.py",
+                          "../bin/InportModule.py",#to include tcl things in the distribute package
                           ],
-        windows = ['../bin/dash.py'],
+
         data_files= [  '../bin/manualrun.cfg',
                        '../bin/run.cfg',
                        '../LICENSE.TXT',
@@ -105,13 +111,16 @@ try:
                        ('database',[]),
                        ('log',[]),
                        ('bin',[]),
-                       ('lib',['../lib/case.cfg']),
+                       ('lib',['../lib/case.cfg', '../lib/baseSession.py']),
                        ( 'lib/html', []),
                        ( 'lib/html', ['../lib/html/index.html']),
                        ( 'lib/html', ['../lib/html/dash.ico']),
                         ( 'log/manual', []),
                        ('selenium', []),
-                       ('product', ['../product/Cisco.py']),
+                       ('product', ['../product/Cisco.py',
+                                    '../product/IxNetwork.py',
+                                    '../product/ixia_tcl_lib.tcl' ]),
+
                       # ('selenium/webdriver/firefox', ['%s\\firefox\\webdriver.xpi'%(wd_base), '%s\\firefox\\webdriver_prefs.json'%(wd_base)]),
                        #('.', ['../tools/webdriver.xpi', '../tools/webdriver_prefs.json']),
                        ],
@@ -131,6 +140,7 @@ try:
                           "skip_archive": True,
                           "ascii": False,
                           "custom_boot_script": '',
+
                         }
                    },
         **py2exe_options
@@ -163,6 +173,14 @@ excludedFolder =['bin',
                  'suite',
                  'product',
                  ]
+
+
+try:
+    IxtclNetworkPath = os.path.abspath('../product/IxTclNetwork')
+    shutil.copytree(IxtclNetworkPath, os.path.abspath(targetDir+'/../product/IxTclNetwork'))
+except:
+    pass
+
 for file in os.listdir(folder):
     sourceFile = os.path.join(folder,  file)
     targetFile = os.path.join(targetDir,  file)
@@ -171,7 +189,9 @@ for file in os.listdir(folder):
         continue
     if os.path.isfile(sourceFile):
         try:
-            open(targetFile, "wb").write(open(sourceFile, "rb").read())
+            filename = os.path.basename(sourceFile)
+            if filename not in ['InportModule.exe']:
+                open(targetFile, "wb").write(open(sourceFile, "rb").read())
             os.remove(sourceFile)
             pass
         except:
@@ -183,6 +203,8 @@ for file in os.listdir(folder):
             pass
         shutil.copytree(sourceFile, targetFile)
         shutil.rmtree(sourceFile)
+
+
 
 
 

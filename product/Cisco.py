@@ -3,10 +3,12 @@
 #from pexpect import spawn, TIMEOUT
 import time
 import re as sre
-from WinSession import WinSession as CSession
+
 import os
 if os.name!='nt':
     from Session import Session as CSession
+else:
+    from WinSession import WinSession as CSession
 reSessionClosed =sre.compile ('Connection closed by foreign host',sre.M)
 class Cisco(CSession):
     attrs={}

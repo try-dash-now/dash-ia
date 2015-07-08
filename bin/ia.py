@@ -10,6 +10,7 @@ import os,sys
 pardir =os.path.dirname(os.path.realpath(os.getcwd()))
 #pardir= os.path.sep.join(pardir.split(os.path.sep)[:-1])
 sys.path.append(os.path.sep.join([pardir,'lib']))
+sys.path.append(os.path.sep.join([pardir,'product']))
 print('\n'.join(sys.path))
 
 
@@ -47,7 +48,7 @@ from IAshell import IAshell
 
       
 i =IAshell('TC',bench, sutnames,manuallogdir )
-
+i.do_tab(False)
 #i.setmode('fun')
 #i.setsut('Sean3') 
 #i.RunCmd('showme')

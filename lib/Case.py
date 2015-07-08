@@ -5,7 +5,7 @@ __mail__ = 'try.dash.now@gmail.com'
 
 import os,time,re
 import sys
-
+import traceback
 libpath = os.path.sep.join([os.path.dirname(os.getcwd()),'lib'])
 if libpath not in sys.path:
     sys.path.insert(0,libpath)
@@ -169,7 +169,10 @@ class Case(object):
             time.sleep(1)
         self.info('QuerySUTOutput(), Expect switchs to search in InteractionBuffer')
         for ses in self.SUTs:
-            self.Session[ses].SetInteractionMode(True)
+            try:
+                self.Session[ses].SetInteractionMode(True)
+            except Exception as e:
+                print(traceback.format_exc())
         if os.name !='nt':
             import pexpect
 

@@ -34,3 +34,4 @@
     #16print '\033[1;47mHighlighted Gray like Ghost\033[1;m'
     #17print '\033[1;48mHighlighted Crimson like Chianti\033[1;m'
 #todo: Sean, 2015-7-2, can't display all output in IAShell or dash
+#fixed: Sean, dash.exe failed with error: AttributeError: 'module' object has no attribute 'DefaultCoord'

@@ -15,7 +15,7 @@ from selenium.webdriver.support.ui import Select
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
 # from selenium.webdriver.support import expected_conditions as EC
-from common import baseSession
+from baseSession import baseSession
 
 firefoxprofile = {
 
