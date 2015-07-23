@@ -13,6 +13,8 @@ class baseSession(object):
     InteractionBuffer=None
     fInteractionMode=False
     InteractionMatch =None
+    FailFlag=False # the flag means in Session's perspective view, case failed
+    ErrorMessage =None # to store the error message
     def __init__(self, name,attrs={},logger=None, logpath=None):
         self.argvs=[]
         self.kwargvs={}
@@ -88,6 +90,7 @@ class baseSession(object):
         self.fInteractionMode=flag
     def AppendData2InteractionBuffer(self,data):
         self.InteractionBuffer+=data
+        self.output = self.InteractionBuffer
     def StartInteractionMode(self,flag):
         self.fInteractionMode=flag
     def SendLine(self,command, clearbuffer=True,AntiIdle=False,Ctrl=False,Alt=False):
@@ -110,3 +113,33 @@ class baseSession(object):
                     self.write(self.attrs.get('LINEEND'))
             except Exception as e:
                 self.error(str(e))
+    def Write2Csv(self, msgList,CsvFileName=None, path=None):
+        '''
+        msgList: if msgList is a list, then each element will be in a cell
+                 if msgList is a string, then all chars will be written to a cell
+        CSVFileName: a file name, default is None, means to create a SUT_NAME_.csv file, and write msg to it, similiar to SUT_NAME.log
+        '''
+        if not path:
+            import os
+            path =  os.path.dirname(self.seslog.name)
+
+        from common import array2csvfile
+        csvfile = self.seslog.name.replace('.log', '.csv')
+        arrayToBeWritten = msgList
+        if  isinstance( msgList, type('string')):
+            arrayToBeWritten = [[msgList]]
+        if CsvFileName:
+            if CsvFileName.find('\\')!=-1 or CsvFileName.find('/')!=-1:
+                csvfile = CsvFileName
+            else:
+                csvfile = os.path.sep.join([path,CsvFileName])
+        array2csvfile(arrayToBeWritten, csvfile)
+
+    def setFailFlag(self, Message):
+        if not self.FailFlag:
+            self.FailFlag = True
+        if not self.ErrorMessage:
+            self.ErrorMessage=[Message]#change the type
+        else:
+            self.ErrorMessage.append(Message)
+

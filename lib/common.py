@@ -71,7 +71,7 @@ def csvfile2array(csvfile):
     return a 
 def array2csvfile(array, csvfile):
 
-    with open(csvfile, 'w',newline ='') as f:  #,newline =''
+    with open(csvfile, 'a+') as f:  #,newline =''
         writer = csv.writer(f)
         for row in array:
             writer.writerow(row)   

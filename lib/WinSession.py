@@ -197,38 +197,14 @@ class WinSession(spawn, baseSession):
             wait = float(wait)
         found =None
 
-        global reSessionClosed
-        output =self.expect([reSessionClosed], 0.1)
-        found = output[0]
-        isalive = self.isalive()
-        if (self.Connect2SUTDone):
-            if (found !=-1):
-                command = self.attrs['CMD']
-                self.error("Session(%s) has been closed by remote host!"%(self.sutname))
-                if command.find('telnet')!=-1:
-                    host=""
-                    port=23
-                    args = command.split(' ')
-                    if len(args)==2:
-                        host = args[1]
-                    elif len(args)==3:
-                        host= args [1]
-                        port = args[2]
-                    spawn.__init__(self, host, port)
-                self.set_debuglevel(1)
-                self.Login2SUT()
+
         m =None
         if not nowait:
             if not self.fInteractionMode:
+
                 output =self.expect(["%s"%(pat)],float(wait))
-                #self.output= output[2]
-                if output[0]==-1:
-                    m =sre.search('%s'%(pat), self.output, sre.M|sre.DOTALL)
-                    if not m:
-                        raise Exception('no Expect(%s) found'%(str(pat)))
-                else:
-                    self.output= output[2]
-                m = sre.search(pat,self.output, sre.M|sre.DOTALL)
+                self.output=output[2]
+                m =sre.search('%s'%(pat), self.output, sre.M|sre.DOTALL)
 
             else:
                 interval=0.1
@@ -249,13 +225,27 @@ class WinSession(spawn, baseSession):
         self.fExpecting=False
         if not m:
             raise Exception('Expect("%s", %f) Failed'%(pat,float(wait)))
-        self.match = m.group()#self.output
-        #print('match pattern: ')
-        #print(self.match)
-        #print('output:\n')
-        #print(str(self.output))
-        return self.output # self.match #
-
+        self.match = m.group()
+        global reSessionClosed
+        mSesClosed= sre.search(reSessionClosed,self.output)
+        isalive = self.isalive()
+        if (self.Connect2SUTDone):
+            if (mSesClosed):
+                command = self.attrs['CMD']
+                self.error("Session(%s) has been closed by remote host!"%(self.sutname))
+                if command.find('telnet')!=-1:
+                    host=""
+                    port=23
+                    args = command.split(' ')
+                    if len(args)==2:
+                        host = args[1]
+                    elif len(args)==3:
+                        host= args [1]
+                        port = args[2]
+                    spawn.__init__(self, host, port)
+                self.set_debuglevel(1)
+                self.Login2SUT()
+        return self.output
 
 
 if __name__=='__main__':

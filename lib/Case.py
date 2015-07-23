@@ -69,6 +69,8 @@ class Case(object):
     lockOutput = None
     lockRR =None
 
+    ErrorMessage =None # to store the error message
+
 
     def SaveCase2File(self):
         import csv
@@ -378,6 +380,7 @@ class Case(object):
         savefile =threading.Thread(target=self.SaveCase2File,args =[])
         savefile.start()
         self.bCaseEnd=True
+
         import time
         import os
         #if self.thInteraction and self.thInteraction.isAlive():
@@ -728,4 +731,40 @@ class Case(object):
             return False
         else:
             return True
-                  
+
+    def CheckCaseResult(self):
+        if not self.ErrorMessage:
+            self.ErrorMessage=[]
+        FailFlag=False
+        for sesname  in self.Session.keys():
+            ses=self.Session[sesname]
+            FailFlag+=ses.FailFlag
+            if ses.ErrorMessage:
+                self.ErrorMessage.append(['SUT: (%s) ErrorMessage is below:'])
+                self.ErrorMessage+=ses.ErrorMessage
+        if FailFlag:
+            resultfilename ='case_result.csv'
+            self.Write2Csv(self.ErrorMessage,resultfilename)
+            self.error('case failed ,check detail in file:%s/%s'%(self.LogDir,resultfilename))
+            raise Exception('case failed ,check detail in file:%s'%resultfilename)
+    def Write2Csv(self, msgList,CsvFileName=None, path=None):
+        '''
+        msgList: if msgList is a list, then each element will be in a cell
+                 if msgList is a string, then all chars will be written to a cell
+        CSVFileName: a file name, default is None, means to create a SUT_NAME_.csv file, and write msg to it, similiar to SUT_NAME.log
+        '''
+        if not path:
+            import os
+            path =  self.LogDir
+
+        from common import array2csvfile
+        csvfile = '%s/result.csv'%path
+        arrayToBeWritten = msgList
+        if  isinstance( msgList, type('string')):
+            arrayToBeWritten = [[msgList]]
+        if CsvFileName:
+            if CsvFileName.find('\\')!=-1 or CsvFileName.find('/')!=-1:
+                csvfile = CsvFileName
+            else:
+                csvfile = os.path.sep.join([path,CsvFileName])
+        array2csvfile(arrayToBeWritten, csvfile)

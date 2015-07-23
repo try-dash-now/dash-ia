@@ -70,12 +70,11 @@ logdir--the log dir ,default is ../html/log/tmp''')
         sut,steps,mode = LoadCaseFromCsv(bench,feature,case, mode, sys.argv)
         TestCase = Case(name=name, suts=sut, steps=steps,mode=mode, logdir=sys.argv[-1], DebugWhenFailed=False, caseconfigfile=runcfgfile)
         TestCase.RunCase(mode, 'setup.1', 'teardown.-1')
+        TestCase.CheckCaseResult()
         try:
             TestCase.EndCase(True,False)
         except:
             pass
-
-        import time
         print ("======================== CASE PASS ========================")
     except Exception as e:
         import traceback
