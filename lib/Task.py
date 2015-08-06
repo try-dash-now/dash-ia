@@ -102,7 +102,7 @@ class Task(object):
         pipe_input ,file_name =tempfile.mkstemp()
         exe_cmd = " "
         c =cmd.strip()
-        if cmd.startswith('./run.p') or cmd.startswith('./t.p') or cmd.startswith('t.p'):
+        if cmd.startswith('./run.p') or cmd.startswith('./t.p') or cmd.startswith('t.p') or c.startswith('t.exe') or c.startswith('./t.exe') or c.startswith('.\\t.exe'):
             pass
         else:
             cmd = '../case/%s'%cmd
@@ -134,7 +134,7 @@ class Task(object):
         else:
             DebugWhenFailed= 'False'
 
-        if cmd.startswith('t.py') :  #cmd.startswith('r.py ') or
+        if cmd.startswith('t.py') or cmd.startswith('t.exe') :  #cmd.startswith('r.py ') or
             executefile = 't.py'
             print(os.getcwd())
             if os.path.exists('t.exe') and not os.path.exists(executefile):
@@ -142,6 +142,7 @@ class Task(object):
                 exe_cmd =''
                 cmd = cmd.replace('t.py', 't.exe')
             exe_cmd =exe_cmd+ cmd+" -l "+logdir
+            print('case to be run: %s'%(exe_cmd))
             pp = subprocess.Popen(args = exe_cmd ,shell =True, stdin=pipe_input)
         elif cmd.find('gtest.py')!=-1:
             exe_cmd =exe_cmd+ cmd+" -l "+logdir

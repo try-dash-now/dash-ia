@@ -51,11 +51,11 @@ case--case name, format is "[casename]"default is the feature file name without 
 mode--default is full, is one of [full,setup,run,teardown,setuprun,runteardown,setupteardown]
 logdir--the log dir ,default is ../html/log/tmp''')
         print (sys.argv)
-        bench= '%s%s%s'%(benchdir, os.sep,sys.argv[2])
-        if sys.argv[2].find(os.sep)!=-1:
+        bench= '%s%s%s'%(benchdir, '/',sys.argv[2])
+        if sys.argv[2].find('/')!=-1 or sys.argv[2].find(os.sep)!=-1:
             feature=sys.argv[1]
         else:
-            feature= '%s%s%s'%(casedir, os.sep,sys.argv[1])
+            feature= '%s%s%s'%(casedir, '/',sys.argv[1])
         case=sys.argv[3]
         mode= sys.argv[4]
         TroulbeshootingWhenCaseFailed = sys.argv[len(sys.argv)-2]

@@ -293,9 +293,13 @@ class Case(object):
             self.ServerPort = int(cfg['serverport'])
         except:
             pass
-        self.Name= name.replace('/','_').replace('\\','_')
-        
-        self.LogDir = '%s%s%s'%(os.path.abspath(logdir),os.sep,'%s%s'%(name,time.strftime("_%Y%m%d_%H%M%S", time.localtime())))
+        self.Name= name
+        if len(self.Name)>80:
+            self.Name=self.Name[0:80]
+        import re
+        self.Name = re.sub(r"[^\w]", "", self.Name)
+
+        self.LogDir = '%s%s%s'%(os.path.abspath(logdir),os.sep,'%s%s'%(self.Name,time.strftime("_%Y%m%d_%H%M%S", time.localtime())))
         #self.LogDir = self.LogDir.replace('\\',os.path.sep).replace('/', os.path.sep).replace(':','')
 
         os.mkdir(self.LogDir)
@@ -740,8 +744,14 @@ class Case(object):
             ses=self.Session[sesname]
             FailFlag+=ses.FailFlag
             if ses.ErrorMessage:
-                self.ErrorMessage.append(['SUT: (%s) ErrorMessage is below:'])
-                self.ErrorMessage+=ses.ErrorMessage
+                print(sesname, ses.ErrorMessage)
+                self.ErrorMessage.append(['SUT: (%s) ErrorMessage is below:'%(sesname)])
+                if type(ses.ErrorMessage) == type('string'):
+                    self.ErrorMessage.append(ses.ErrorMessage)
+                else:
+                    print(sesname, ses.ErrorMessage)
+                    for i in ses.ErrorMessage:
+                        self.ErrorMessage.append(i)
         if FailFlag:
             resultfilename ='case_result.csv'
             self.Write2Csv(self.ErrorMessage,resultfilename)
@@ -760,8 +770,6 @@ class Case(object):
         from common import array2csvfile
         csvfile = '%s/result.csv'%path
         arrayToBeWritten = msgList
-        if  isinstance( msgList, type('string')):
-            arrayToBeWritten = [[msgList]]
         if CsvFileName:
             if CsvFileName.find('\\')!=-1 or CsvFileName.find('/')!=-1:
                 csvfile = CsvFileName

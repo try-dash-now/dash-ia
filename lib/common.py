@@ -72,9 +72,14 @@ def csvfile2array(csvfile):
 def array2csvfile(array, csvfile):
 
     with open(csvfile, 'a+') as f:  #,newline =''
-        writer = csv.writer(f)
+        writer = csv.writer(f, lineterminator ='\n')
         for row in array:
-            writer.writerow(row)   
+            r = []
+            if type(row) ==type('string'):
+                r.append([row])
+            else:
+                r=row
+            writer.writerow(r)
 import sys,logging, string
 class StreamToLogger(object):
     """
